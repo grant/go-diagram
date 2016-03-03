@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html data-uuid="{{ .UUID }}">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/build/bundle.css">
+    <title>{{ .Title }}</title>
+    {{ .HTMLMeta }}
+  </head>
+  <body>
+    {{if .Error}}
+      <div
+        class="error"
+        style="
+          width: 50%;
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          opacity: .5;
+          color: #666;
+          border: 2px solid #fb2c10;
+          background: rgba(0,0,0,.1);
+          font-family:monaco, Consolas, Lucida Console, monospace;
+          pointer-events: none;"
+        >
+          <button
+            style="padding: 10px 10px 0 10px;pointer-events: auto; font-size: 16px"
+            onclick="this.parentElement.parentElement.removeChild(this.parentElement)"
+          >
+            Server Error: {{ .UUID }}
+          </button>
+        <hr style="
+          height: 0px;
+          border: none;
+          border-bottom: 2px solid #fb2c10;
+        "/>
+        <pre style="font-family:monaco, Consolas, Lucida Console, monospace;
+          font-size: 14px; padding: 0 10px 10px; margin: 0">{{ .Error }}</pre>
+      </div>
+    {{end}}
+    <div id="app">{{ .HTMLApp }}</div>
+    <script onload="this.parentElement.removeChild(this)">window['--app-initial'] = JSON.parse("{{if .Initial}}{{ .Initial }}{{else}}{}{{end}}");</script>
+    <script async defer src="/static/build/bundle.js" onload="this.parentElement.removeChild(this)"></script>
+  </body>
+</html>

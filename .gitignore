@@ -1,10 +1,19 @@
 .DS_Store
+.pid
+
 .AppleDouble
 .LSOverride
 
 # Icon must end with two \r
 Icon
 
+/node_modules
+/bin
+/pkg
+/src
+/vendor
+/server/bindata.go
+/server/data/static/build
 
 # Thumbnails
 ._*
