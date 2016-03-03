@@ -7,13 +7,23 @@ import { asyncChangeProjectName, asyncChangeOwnerName } from '../../actions/AppA
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import Struct from '../Struct';
+import UMLDiagram from '../UMLDiagram';
+import SearchBox from '../SearchBox';
+import MiniMap from '../MiniMap';
 
 class HomePage extends Component {
   render() {
     const dispatch = this.props.dispatch;
     const { projectName, ownerName } = this.props.data;
     return (
-      <div>
+      <div className='HomePage'>
+        <span className='current-directory'>
+          ~/cse404/
+        </span>
+        <UMLDiagram />
+        <SearchBox />
+        <MiniMap />
         <h1>Hello Anwell and Grant!</h1>
         <h2>This is the demo for the <span className="home__text--red">{ projectName }</span> by <a href={'https://twitter.com/' + ownerName} >@{ ownerName }</a></h2>
         <label className="home__label">Change to your project name:

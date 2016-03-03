@@ -8,27 +8,11 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Logo from '../../img/logo.png';
-import Struct from './Struct';
 
 class App extends Component {
   render() {
     return (
       <div className="wrapper">
-        <Struct
-          name='Op'
-          fields={[{
-            name: 'OpType',
-            type: 'string',
-          }, {
-            name: 'ServerId',
-            type: 'int',
-          }, {
-            name: 'Px',
-            type: '*Paxos',
-          }]}
-        />
-        <img className="logo" src={Logo} />
         { this.props.children }
       </div>
     );

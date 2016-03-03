@@ -19,10 +19,14 @@ class Struct extends Component {
     const dispatch = this.props.dispatch;
     let fields = this.props.fields.map(field => {
       let typeClass;
-      switch (field.type) {
-        case 'string': typeClass = 'string'; break;
-        case 'int': typeClass = 'int'; break;
-        default: typeClass = 'other'; break;
+      if (field.type.includes('string')) {
+        typeClass = 'string';
+      } else if (field.type.includes('int')) {
+        typeClass = 'int';
+      } else if (field.type.includes('bool')) {
+        typeClass = 'bool';
+      } else {
+        typeClass = 'other';
       }
       return (
         <li className='field'>
