@@ -18,19 +18,29 @@ class Struct extends Component {
   render() {
     const dispatch = this.props.dispatch;
     let fields = this.props.fields.map(field => {
+      let typeClass;
+      switch (field.type) {
+        case 'string': typeClass = 'string'; break;
+        case 'int': typeClass = 'int'; break;
+        default: typeClass = 'other'; break;
+      }
       return (
         <li className='field'>
-          <img src={field.icon} />
-          <span className='name'>{field.name}</span>
-          <span className='type'>{field.type}</span>
+          <span className='left'>
+            <span className='field icon'>f</span>
+            <span className='name'>{field.name}</span>
+          </span>
+          <span className='right'>
+            <span className={['type', typeClass].join(' ')}>{field.type}</span>
+          </span>
         </li>
       );
     });
     return (
       <div className='struct'>
         <header className='header'>
-          <img src='img/struct-icon.png'/>
-          {this.props.name}
+          <span className='class icon'>c</span>
+          <span className='name'>{this.props.name}</span>
         </header>
         <ol className='fields'>
           {fields}

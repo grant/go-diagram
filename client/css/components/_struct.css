@@ -1,0 +1,76 @@
+.struct {
+  display: inline-block;
+}
+
+.struct .header {
+  background-color: rgb(153, 153, 153);
+  padding: 5px;
+}
+.struct .header .name {
+  padding-left: 5px;
+  color: rgb(40, 40, 40);
+  font-weight: 700;
+}
+
+.struct .icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 10px;
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  text-align: center;
+  vertical-align: middle;
+  margin-top: -3px;
+}
+
+.struct .class.icon {
+  background-color: orange;
+  color: white;
+}
+.struct .field.icon {
+  background-color: yellow;
+  color: rgb(40, 40, 40);
+}
+
+.struct .fields {
+  background-color: rgb(102, 102, 102);
+  margin: 0;
+  padding: 0;
+}
+
+.struct .fields > .field {
+  list-style-type: none;
+  height: 30px;
+  clear: both;
+  overflow: hidden;
+}
+
+/* Struct field left/right */
+.struct .field .left, .struct .field .right {
+  display: block;
+  padding: 5px;
+}
+.struct .field .left {
+  float: left;
+  color: white;
+  /* Padding between left and right */
+  padding-right: 20px;
+}
+.struct .field .right {
+  float: right;
+}
+
+/* Struct field contents */
+.struct .field .name {
+  padding-left: 5px;
+}
+.struct .field .type.int {
+  color: green;
+}
+.struct .field .type.string {
+  color: blue;
+}
+.struct .field .type.other {
+  color: orange;
+}

@@ -15,7 +15,19 @@ class App extends Component {
   render() {
     return (
       <div className="wrapper">
-        <Struct name='food' />
+        <Struct
+          name='Op'
+          fields={[{
+            name: 'OpType',
+            type: 'string',
+          }, {
+            name: 'ServerId',
+            type: 'int',
+          }, {
+            name: 'Px',
+            type: '*Paxos',
+          }]}
+        />
         <img className="logo" src={Logo} />
         { this.props.children }
       </div>
