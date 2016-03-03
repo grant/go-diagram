@@ -9,11 +9,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Logo from '../../img/logo.png';
+import Struct from './Struct';
 
 class App extends Component {
   render() {
     return (
       <div className="wrapper">
+        <Struct name='food' />
         <img className="logo" src={Logo} />
         { this.props.children }
       </div>
