@@ -18,11 +18,13 @@ class HomePage extends Component {
     const { projectName, ownerName } = this.props.data;
     return (
       <div className='HomePage'>
-        <span className='current-directory'>
-          ~/cse404/
-        </span>
+        <SearchBox
+          className='current-directory'
+          value='~/cse404/'
+          placeholder='project directory...'
+          />
         <UMLDiagram />
-        <SearchBox />
+        <SearchBox className='search' />
         <MiniMap />
         <h1>Hello Anwell and Grant!</h1>
         <h2>This is the demo for the <span className="home__text--red">{ projectName }</span> by <a href={'https://twitter.com/' + ownerName} >@{ ownerName }</a></h2>
