@@ -6,6 +6,13 @@
 import React, { Component } from 'react';
 
 class Button extends Component {
+  static get defaultProps() {
+    return {
+      value: '',
+      onClick: ()=>{},
+    };
+  }
+
   constructor(props) {
     super(props);
   }
@@ -22,9 +29,5 @@ class Button extends Component {
     );
   }
 }
-Button.defaultProps = {
-  value: '',
-  onClick: ()=>{},
-};
 
 export default Button;

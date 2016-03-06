@@ -24,7 +24,8 @@ class HomePage extends Component {
         files: [{
           name: 'mainfile.go',
           structs: [{
-            name: 'Op',
+            // name: 'Op',
+            name: 'Opawaoiegiowegjwegioowjegiow egiowe gweig ',
             fields: [{
               name: 'OpType',
               type: 'string',

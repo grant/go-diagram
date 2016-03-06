@@ -7,6 +7,12 @@ import React, { Component } from 'react';
 import UMLDiagram from './UMLDiagram';
 
 class MiniMap extends Component {
+  static get defaultProps() {
+    return {
+      data: null,
+    };
+  }
+
   render() {
     const dispatch = this.props.dispatch;
     return (
@@ -17,7 +23,7 @@ class MiniMap extends Component {
           <button>package</button>
         </div>
         <div className='map'>
-          <UMLDiagram 
+          <UMLDiagram
             data={this.props.data}
             miniMap={true}
           />
@@ -26,8 +32,5 @@ class MiniMap extends Component {
     );
   }
 }
-MiniMap.defaultProps = {
-  data: null,
-};
 
 export default MiniMap;

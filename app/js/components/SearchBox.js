@@ -6,6 +6,14 @@
 import React, { Component } from 'react';
 
 class SearchBox extends Component {
+  static get defaultProps() {
+    return {
+      className: '',
+      value: '',
+      placeholder: 'search...',
+    };
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -33,10 +41,5 @@ class SearchBox extends Component {
     this.setState({...this.state, query: e.target.value});
   }
 }
-SearchBox.defaultProps = {
-  className: '',
-  value: '',
-  placeholder: 'search...',
-};
 
 export default SearchBox;

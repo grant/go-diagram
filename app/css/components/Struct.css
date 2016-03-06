@@ -5,13 +5,25 @@
 }
 
 .Struct .header {
+  position: relative;
   background-color: rgb(153, 153, 153);
   padding: 5px;
 }
 .Struct .header .name {
-  padding-left: 5px;
+  padding-left: 20px;
+  padding-right: 5px;
   color: rgb(40, 40, 40);
   font-weight: 700;
+
+  white-space: nowrap;
+}
+.Struct input {
+  /* Disable default input */
+  background-color: transparent;
+  border: none;
+
+  /* Make text overflow a bit better */
+  text-overflow: ellipsis;
 }
 
 .Struct .icon {
@@ -22,8 +34,8 @@
   font-size: 9px;
   font-weight: 700;
   text-align: center;
-  vertical-align: middle;
-  margin-top: -3px;
+  position: absolute;
+  margin-top: 5px;
 }
 
 .Struct .class.icon {
@@ -62,10 +74,13 @@
 .Struct .field .right {
   float: right;
 }
+.Struct .field .right input {
+  text-align: right;
+}
 
 /* Struct field contents */
 .Struct .field .name {
-  padding-left: 5px;
+  padding-left: 20px;
 }
 .Struct .field .type.int {
   color: rgb(46, 204, 113);

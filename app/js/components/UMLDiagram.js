@@ -8,6 +8,13 @@ import React, { Component } from 'react';
 import Struct from './Struct';
 
 class UMLDiagram extends Component {
+  static get defaultProps() {
+    return {
+      data: null,
+      miniMap: false,
+    };
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -126,10 +133,6 @@ class UMLDiagram extends Component {
     }
   }
 }
-UMLDiagram.defaultProps = {
-  data: null,
-  miniMap: false,
-};
 
 // Wrap the component to inject dispatch and state into it
 export default UMLDiagram;
