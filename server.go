@@ -5,44 +5,46 @@
 package main
 
 import (
-	"fmt"
 	"flag"
+	"fmt"
 	//"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strconv"
-	"text/template"
 	"time"
 
 	"github.com/gorilla/websocket"
+	"runtime"
 )
 
 const (
-// Time allowed to write the file to the client.
+	// Time allowed to write the file to the client.
 	writeWait = 10 * time.Second
 
-// Time allowed to read the next pong message from the client.
+	// Time allowed to read the next pong message from the client.
 	pongWait = 60 * time.Second
 
-// Send pings to client with this period. Must be less than pongWait.
+	// Send pings to client with this period. Must be less than pongWait.
 	pingPeriod = (pongWait * 9) / 10
 
-// Poll file for changes with this period.
+	// Poll file for changes with this period.
 	filePeriod = 2 * time.Second
+
+	port = "8080"
 )
 
 var (
-	addr      = flag.String("addr", ":8080", "http service address")
-	homeTempl = template.Must(template.New("").Parse(homeHTML))
-	filename  string
-	upgrader  = websocket.Upgrader{
+	addr     = flag.String("addr", ":"+port, "http service address")
+	filename string
+	upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 	}
 )
 
-func readFileIfModified(lastMod time.Time) ([]StructInfo, time.Time, error) {
+func readFileIfModified(lastMod time.Time) ([]Package, time.Time, error) {
 	fi, err := os.Stat(filename)
 	if err != nil {
 		return nil, lastMod, err
@@ -54,7 +56,7 @@ func readFileIfModified(lastMod time.Time) ([]StructInfo, time.Time, error) {
 	//if err != nil {
 	//	return nil, fi.ModTime(), err
 	//}
-	structs := GetStructs(filename)
+	structs := GetStructsDirName(filename)
 	return structs, fi.ModTime(), err
 }
 
@@ -83,11 +85,11 @@ func writer(ws *websocket.Conn, lastMod time.Time) {
 	for {
 		select {
 		case <-fileTicker.C:
-			var structs []StructInfo
+			var packages []Package
 			//var p []byte
 			var err error
 
-			structs, lastMod, err = readFileIfModified(lastMod)
+			packages, lastMod, err = readFileIfModified(lastMod)
 
 			if err != nil {
 				if s := err.Error(); s != lastError {
@@ -98,10 +100,10 @@ func writer(ws *websocket.Conn, lastMod time.Time) {
 				lastError = ""
 			}
 
-			if structs != nil {
+			if packages != nil {
 				fmt.Println("Pushing file change to client.")
 				ws.SetWriteDeadline(time.Now().Add(writeWait))
-				ws.WriteJSON(structs)
+				ws.WriteJSON(packages)
 				//if err := ws.WriteMessage(websocket.TextMessage, p); err != nil {
 				//	return
 				//}
@@ -134,35 +136,6 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	reader(ws)
 }
 
-//func serveHome(w http.ResponseWriter, r *http.Request) {
-//	fmt.Println("Begin home page server")
-//	if r.URL.Path != "/" {
-//		http.Error(w, "Not found", 404)
-//		return
-//	}
-//	if r.Method != "GET" {
-//		http.Error(w, "Method not allowed", 405)
-//		return
-//	}
-//	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-//	structs, lastMod, err := readFileIfModified(time.Time{})
-//	p := nil
-//	if err != nil {
-//		p := []byte(err.Error())
-//		lastMod = time.Unix(0, 0)
-//	}
-//	var v = struct {
-//		Host    string
-//		Data    string
-//		LastMod string
-//	}{
-//		r.Host,
-//		string(p),
-//		strconv.FormatInt(lastMod.UnixNano(), 16),
-//	}
-//	homeTempl.Execute(w, &v)
-//}
-
 func main() {
 	flag.Parse()
 	if flag.NArg() != 1 {
@@ -172,32 +145,17 @@ func main() {
 	//http.HandleFunc("/", serveHome)
 	http.Handle("/", http.FileServer(http.Dir("./app/build")))
 	http.HandleFunc("/ws", serveWs)
-	fmt.Println("Listening on http://localhost:8080")
+	fmt.Println("Listening on http://localhost:" + port)
+
+	switch runtime.GOOS {
+	case "linux":
+		exec.Command("x-www-browser", "http://localhost:"+port).Run()
+	case "windows":
+		exec.Command("explorer", "http://localhost:"+port).Run()
+	default:
+		exec.Command("open", "http://localhost:"+port).Run()
+	}
 	if err := http.ListenAndServe(*addr, nil); err != nil {
 		log.Fatal(err)
 	}
 }
-
-const homeHTML = `<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>WebSocket Example</title>
-    </head>
-    <body>
-        <pre id="fileData">{{.Data}}</pre>
-        <script type="text/javascript">
-            (function() {
-                var data = document.getElementById("fileData");
-                var conn = new WebSocket("ws://{{.Host}}/ws?lastMod={{.LastMod}}");
-                conn.onclose = function(evt) {
-                    data.textContent = 'Connection closed';
-                }
-                conn.onmessage = function(evt) {
-                    console.log('file updated');
-                    data.textContent = evt.data;
-                }
-            })();
-        </script>
-    </body>
-</html>
-`

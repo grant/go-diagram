@@ -12,55 +12,60 @@ import (
 	"bytes"
 )
 
-//type Type string
-
 type ListNode struct {
 	data int32
 	next *ListNode
 }
 
-type StructInfo struct {
+type Type struct {
+	Literal string `json:"literal"`
+	Struct  string `json:"struct"` // If this type is or wraps a struct, the name of that struct (name conflicts?)
+}
+
+type Package struct {
+	Name  string `json:"name"`
+	Files []File `json:"files"`
+}
+
+type File struct {
 	Name    string   `json:"name"`
-	Fields  []Field  `json:"fields"`
-	Methods []Method `json:"methods"`
+	Structs []Struct `json:"structs"`
+}
+
+type Struct struct {
+	Name   string  `json:"name"`
+	Fields []Field `json:"fields"`
+	//Methods []Method `json:"methods"`
 }
 
 // TODO multiple names per field
 type Field struct {
-	Name string `json:"names`
-	Type string `json:"type"`
+	Name string `json:"name"`
+	Type Type   `json:"type"`
 }
 
 type Method struct {
-	Name       string `json:"name`
-	ReturnType string `json:"returnType"`
+	Name       string `json:"name"`
+	ReturnType []Type `json:"returnType"`
 }
 
 type EdgeCasesStruct struct {
-	x, y int
-	u    float32
-	_    float32 // padding
-	A    *[]int
-	F    func()
-	string	// unnamed field
+	x, y   int
+	u      float32
+	_      float32 // padding
+	A      *[]int
+	F      func()
+	string // unnamed field
 }
 
 func test() {
-	structs := GetStructs("parse.go")
+	structs := GetStructsFileName("parse.go")
 	structsJson, _ := json.Marshal(structs)
 	fmt.Println(string(structsJson))
 }
 
-// TODO: don't deeply nest
-// https://golang.org/ref/spec#Struct_types
-func GetStructs(file string) []StructInfo {
-	var structs []StructInfo
-	fset := token.NewFileSet()
-
-	f, err := parser.ParseFile(fset, file, nil, 0)
-	if err != nil {
-		panic(err)
-	}
+func GetStructsFile(fset *token.FileSet, f *ast.File, fname string) File {
+	var structs []Struct
 	//ast.Print(fset, f)
 	// For all declarations
 	for _, d := range f.Decls {
@@ -79,18 +84,49 @@ func GetStructs(file string) []StructInfo {
 								if err := format.Node(&buf, fset, field.Type); err != nil {
 									panic(err)
 								}
-								fi := Field{Name: name.Name, Type: string(buf.Bytes())}
+								fieldtype := Type{Literal: string(buf.Bytes()), Struct: "TODO"}
+								fi := Field{Name: name.Name, Type: fieldtype}
 								fields = append(fields, fi)
 							}
 						}
-						structs = append(structs, StructInfo{Name: ts.Name.Name, Fields: fields, Methods: nil})
+						structs = append(structs, Struct{Name: ts.Name.Name, Fields: fields})
 					}
 				}
 			}
 		}
 	}
 	fmt.Printf("%d structs found\n", len(structs))
-	return structs
+	return File{Name: fname, Structs: structs}
+}
+
+// TODO: don't deeply nest
+// https://golang.org/ref/spec#Struct_types
+func GetStructsFileName(filename string) File {
+	fset := token.NewFileSet()
+
+	f, err := parser.ParseFile(fset, filename, nil, 0)
+	if err != nil {
+		panic(err)
+	}
+	return GetStructsFile(fset, f, filename)
+}
+
+func GetStructsDirName(path string) []Package {
+	var packages []Package
+	fset := token.NewFileSet()
+
+	packagemap, err := parser.ParseDir(fset, path, nil, 0)
+	if err != nil {
+		panic(err)
+	}
+	for packagename, packageval := range packagemap {
+		var files []File
+		for fname, f := range packageval.Files {
+			files = append(files, GetStructsFile(fset, f, fname))
+		}
+		packages = append(packages, Package{Name: packagename, Files: files})
+	}
+	return packages
 }
 
 // Adds * for StarExpr, prints name for Ident, TODO: ignores other expressions
