@@ -36,16 +36,17 @@ type Method struct {
 	ReturnType string `json:"returnType"`
 }
 
-type Test struct {
+type EdgeCasesStruct struct {
 	x, y int
 	u    float32
 	_    float32 // padding
 	A    *[]int
 	F    func()
+	string	// unnamed field
 }
 
-func main() {
-	structs := GetStructs("server.go")
+func test() {
+	structs := GetStructs("parse.go")
 	structsJson, _ := json.Marshal(structs)
 	fmt.Println(string(structsJson))
 }
@@ -60,7 +61,7 @@ func GetStructs(file string) []StructInfo {
 	if err != nil {
 		panic(err)
 	}
-	ast.Print(fset, f)
+	//ast.Print(fset, f)
 	// For all declarations
 	for _, d := range f.Decls {
 		if g, ok := d.(*ast.GenDecl); ok && g.Tok == token.TYPE {
@@ -88,6 +89,7 @@ func GetStructs(file string) []StructInfo {
 			}
 		}
 	}
+	fmt.Printf("%d structs found\n", len(structs))
 	return structs
 }
 
