@@ -7,6 +7,23 @@
 import React, { Component } from 'react';
 import Struct from './Struct';
 
+// Helper
+// Gets the closest element that has class `classname`. Returns null if doesn't exist.
+let distFromParent = (element, classname) => {
+  let searchClass = element.className || '';
+  if (searchClass.split(' ').indexOf(classname)>=0) return 0;
+  if (element.parentNode) {
+    let dist = distFromParent(element.parentNode, classname);
+    if (dist !== null) {
+      return 1 + dist;
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
+};
+
 class UMLDiagram extends Component {
   static get defaultProps() {
     return {
@@ -20,6 +37,12 @@ class UMLDiagram extends Component {
     this.state = {
       dragging: false,
       dragOrigin: null,
+      clickStart: null,
+      selection: {
+        pkg: null,
+        file: null,
+        struct: null,
+      },
       position: {
         x: 0,
         y: 0,
@@ -51,15 +74,32 @@ class UMLDiagram extends Component {
     };
 
     // Create the package innards
+    let selection = this.state.selection;
     let packages = this.state.data.packages.map(pkg => {
       return (
-        <section key={pkg.name} className='package'>
+        <section
+          ref={pkg.name}
+          key={pkg.name}
+          className={['package', (selection.pkg === pkg.name) ? 'selected' : ''].join(' ')}
+          onClick={this.onPackageClick.bind(this, pkg)}
+        >
+          <h3 className='title'>{pkg.name}</h3>
           {pkg.files.map(file => {
             return (
-              <div key={file.name} className='file'>
+              <div
+                ref={pkg.name + '/' + file.name}
+                key={file.name}
+                className={['file', (selection.file === file.name) ? 'selected' : ''].join(' ')}
+                onClick={this.onFileClick.bind(this, {
+                  pkg: pkg,
+                  file: file,
+                })}
+              >
+                <h3 className='title'>{file.name}</h3>
                 {file.structs.map(struct => {
                   return (
                     <Struct
+                      ref={pkg.name + '/' + file.name + '/' + struct.name}
                       key={struct.name}
                       name={struct.name}
                       fields={struct.fields}
@@ -80,6 +120,7 @@ class UMLDiagram extends Component {
         onMouseUp={this.onMouseUp.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}
         onMouseMove={this.onMouseMove.bind(this)}
+        onClick={this.deselect.bind(this)}
       >
         <div
           className='diagram'
@@ -97,6 +138,7 @@ class UMLDiagram extends Component {
     this.setState({
       ...this.state,
       dragging: true,
+      clickStart: +new Date,
       dragOrigin: {
         x: pageX - x,
         y: pageY - y,
@@ -106,6 +148,61 @@ class UMLDiagram extends Component {
 
   stopDrag(e) {
     this.setState({...this.state, dragging: false});
+  }
+
+  deselect(e) {
+    console.log('done')
+    if (distFromParent(e.target, 'package') === null &&
+        distFromParent(e.target, 'file') === null) {
+      console.log('hi');
+      this.setState({
+        ...this.state,
+        selection: {
+          pkg: null,
+          file: null,
+          struct: null,
+        }
+      });
+    }
+  }
+  selectPackage(pkg) {
+    console.log('test')
+    this.setState({
+      ...this.state,
+      selection: {
+        pkg: pkg.name,
+        file: null,
+        struct: null,
+      }
+    });
+  }
+  selectFile(path) {
+    console.log('test3')
+    this.setState({
+      ...this.state,
+      selection: {
+        pkg: path.pkg.name,
+        file: path.file.name,
+        struct: null,
+      }
+    });
+  }
+
+  onPackageClick(pkg, e) {
+    // TODO Make a finer filter (don't include child clicks from structs)
+    console.log(distFromParent(e.target, 'file'), e.target)
+    if (distFromParent(e.target, 'package') !== null && distFromParent(e.target, 'file') === null) {
+      // select packge
+      this.selectPackage(pkg)
+    }
+  }
+
+  onFileClick(path, e) {
+    // TODO Make a finer filter (don't include child clicks from structs)
+    if (distFromParent(e.target, 'file') < distFromParent(e.target, 'package')) {
+      // select file
+      this.selectFile(path)
+    }
   }
 
   // Events
