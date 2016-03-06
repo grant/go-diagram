@@ -7,7 +7,7 @@ package main
 import (
 	"fmt"
 	"flag"
-	"io/ioutil"
+	//"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -42,8 +42,7 @@ var (
 	}
 )
 
-func readFileIfModified(lastMod time.Time) ([]byte, time.Time, error) {
-	fmt.Println("Read if modified")
+func readFileIfModified(lastMod time.Time) ([]StructInfo, time.Time, error) {
 	fi, err := os.Stat(filename)
 	if err != nil {
 		return nil, lastMod, err
@@ -51,11 +50,12 @@ func readFileIfModified(lastMod time.Time) ([]byte, time.Time, error) {
 	if !fi.ModTime().After(lastMod) {
 		return nil, lastMod, nil
 	}
-	p, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, fi.ModTime(), err
-	}
-	return p, fi.ModTime(), nil
+	//p, err := ioutil.ReadFile(filename)
+	//if err != nil {
+	//	return nil, fi.ModTime(), err
+	//}
+	structs := GetStructs(filename)
+	return structs, fi.ModTime(), err
 }
 
 func reader(ws *websocket.Conn) {
@@ -83,27 +83,28 @@ func writer(ws *websocket.Conn, lastMod time.Time) {
 	for {
 		select {
 		case <-fileTicker.C:
-			var p []byte
+			var structs []StructInfo
+			//var p []byte
 			var err error
 
-			p, lastMod, err = readFileIfModified(lastMod)
+			structs, lastMod, err = readFileIfModified(lastMod)
 
 			if err != nil {
 				if s := err.Error(); s != lastError {
 					lastError = s
-					p = []byte(lastError)
+					//p = []byte(lastError)
 				}
 			} else {
 				lastError = ""
 			}
 
-			if p != nil {
-				fmt.Println("should update")
+			if structs != nil {
+				fmt.Println("Pushing file change to client.")
 				ws.SetWriteDeadline(time.Now().Add(writeWait))
-				if err := ws.WriteMessage(websocket.TextMessage, p); err != nil {
-					fmt.Println("should write message")
-					return
-				}
+				ws.WriteJSON(structs)
+				//if err := ws.WriteMessage(websocket.TextMessage, p); err != nil {
+				//	return
+				//}
 			}
 		case <-pingTicker.C:
 			ws.SetWriteDeadline(time.Now().Add(writeWait))
@@ -115,7 +116,7 @@ func writer(ws *websocket.Conn, lastMod time.Time) {
 }
 
 func serveWs(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Servews")
+	fmt.Println("Begin websocket server")
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		if _, ok := err.(websocket.HandshakeError); !ok {
@@ -133,33 +134,34 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	reader(ws)
 }
 
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Serve home")
-	if r.URL.Path != "/" {
-		http.Error(w, "Not found", 404)
-		return
-	}
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", 405)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	p, lastMod, err := readFileIfModified(time.Time{})
-	if err != nil {
-		p = []byte(err.Error())
-		lastMod = time.Unix(0, 0)
-	}
-	var v = struct {
-		Host    string
-		Data    string
-		LastMod string
-	}{
-		r.Host,
-		string(p),
-		strconv.FormatInt(lastMod.UnixNano(), 16),
-	}
-	homeTempl.Execute(w, &v)
-}
+//func serveHome(w http.ResponseWriter, r *http.Request) {
+//	fmt.Println("Begin home page server")
+//	if r.URL.Path != "/" {
+//		http.Error(w, "Not found", 404)
+//		return
+//	}
+//	if r.Method != "GET" {
+//		http.Error(w, "Method not allowed", 405)
+//		return
+//	}
+//	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+//	structs, lastMod, err := readFileIfModified(time.Time{})
+//	p := nil
+//	if err != nil {
+//		p := []byte(err.Error())
+//		lastMod = time.Unix(0, 0)
+//	}
+//	var v = struct {
+//		Host    string
+//		Data    string
+//		LastMod string
+//	}{
+//		r.Host,
+//		string(p),
+//		strconv.FormatInt(lastMod.UnixNano(), 16),
+//	}
+//	homeTempl.Execute(w, &v)
+//}
 
 func main() {
 	flag.Parse()
@@ -168,10 +170,10 @@ func main() {
 	}
 	filename = flag.Args()[0]
 	//http.HandleFunc("/", serveHome)
-	http.Handle("/", http.FileServer(http.Dir("../../build")))
+	http.Handle("/", http.FileServer(http.Dir("./app/build")))
 	http.HandleFunc("/ws", serveWs)
+	fmt.Println("Listening on http://localhost:8080")
 	if err := http.ListenAndServe(*addr, nil); err != nil {
-		fmt.Println("Listening on http://localhost:8080")
 		log.Fatal(err)
 	}
 }
