@@ -4,6 +4,15 @@
   overflow: hidden;
 }
 
+.Struct input {
+  /* Disable default input */
+  background-color: transparent;
+  border: none;
+
+  /* Make text overflow a bit better */
+  text-overflow: ellipsis;
+}
+
 .Struct .header {
   position: relative;
   background-color: rgb(153, 153, 153);
@@ -17,13 +26,21 @@
 
   white-space: nowrap;
 }
-.Struct input {
-  /* Disable default input */
-  background-color: transparent;
-  border: none;
-
-  /* Make text overflow a bit better */
-  text-overflow: ellipsis;
+.Struct .header .icon {
+  overflow: hidden;
+  cursor: pointer;
+}
+.Struct .header .icon:hover {
+  background-color: rgb(46, 204, 113);
+}
+.Struct .header .icon .p {
+  display: none;
+}
+.Struct .header .icon:hover .c {
+  display: none;
+}
+.Struct .header .icon:hover .p {
+  display: block;
 }
 
 .Struct .icon {
@@ -45,10 +62,23 @@
 .Struct .field.icon {
   background-color: rgb(241, 196, 15);
   color: rgb(40, 40, 40);
+  overflow: hidden;
+  cursor: pointer;
+}
+.Struct .field.icon .f {
+  display: block;
+}
+.Struct .field.icon:hover {
+  background-color: rgb(231, 76, 60);
+}
+.Struct .field.icon:hover .f {
+  display: none;
+}
+.Struct .field.icon:hover .x {
+  display: block;
 }
 
 .Struct .fields {
-  background-color: rgb(102, 102, 102);
   margin: 0;
   padding: 0;
 }
@@ -58,6 +88,10 @@
   height: 30px;
   clear: both;
   overflow: hidden;
+  background-color: rgb(102, 102, 102);
+}
+.Struct .fields > .field:hover {
+  background-color: rgb(130, 130, 130);
 }
 
 /* Struct field left/right */

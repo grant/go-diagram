@@ -10,6 +10,8 @@ import AutosizeInput from 'react-input-autosize';
 
 // Constants
 const HEADER_REF = 'header-ref';
+const FIELD_NAME_PREFIX = 'name-';
+const FIELD_TYPE_PREFIX = 'type-';
 const STRUCT_MIN_WIDTH = 80;
 
 class Struct extends Component {
@@ -68,10 +70,13 @@ class Struct extends Component {
       return (
         <li key={i} className='field'>
           <span className='left'>
-            <span className='field icon'>f</span>
+            <span className='field icon' onClick={this.onRemoveField.bind(this, i)}>
+              <span className='f'>f</span>
+              <span className='x'>x</span>
+            </span>
             {getInput({
               name: 'name',
-              ref: 'field-' + i,
+              ref: FIELD_NAME_PREFIX + i,
               value: field.name,
               onChange: this.onFieldNameChange.bind(this, i),
             })}
@@ -79,7 +84,7 @@ class Struct extends Component {
           <span className='right'>
             {getInput({
               name: ['type', typeClass].join(' '),
-              ref: 'type-' + i,
+              ref: FIELD_TYPE_PREFIX + i,
               value: field.type,
               onChange: this.onFieldTypeChange.bind(this, i),
             })}
@@ -90,8 +95,11 @@ class Struct extends Component {
 
     return (
       <div className='Struct'>
-        <header className='header' onClick={this.onHeaderClick.bind(this)}>
-          <span className='class icon'>c</span>
+        <header className='header'>
+          <span className='class icon' onClick={this.onAddField.bind(this)}>
+            <span className='c'>c</span>
+            <span className='p'>+</span>
+          </span>
           {getInput({
             name: 'name',
             ref: HEADER_REF,
@@ -111,7 +119,7 @@ class Struct extends Component {
     newFields[key].type = e.target.value;
     this.setState({
       ...this.state,
-      field: newFields,
+      fields: newFields,
     });
   }
 
@@ -120,7 +128,29 @@ class Struct extends Component {
     newFields[key].name = e.target.value;
     this.setState({
       ...this.state,
-      field: newFields,
+      fields: newFields,
+    });
+  }
+
+  onRemoveField(key, e) {
+    let newFields = this.state.fields.slice(0);
+    delete newFields[key];
+    this.setState({
+      ...this.state,
+      fields: newFields,
+    });
+  }
+
+  onAddField(e) {
+    this.refs[HEADER_REF].blur()
+    let newFields = this.state.fields.slice(0);
+    newFields.push({
+      name: 'name',
+      type: 'type',
+    });
+    this.setState({
+      ...this.state,
+      fields: newFields,
     });
   }
 
