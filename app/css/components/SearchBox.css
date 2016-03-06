@@ -4,6 +4,7 @@
 
 .SearchBox .input {
   border: none;
+  width: 100%;
   background-color: rgba(200, 200, 200, 0.3);
   padding: 5px 10px;
 }

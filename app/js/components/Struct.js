@@ -29,7 +29,7 @@ class Struct extends Component {
         typeClass = 'other';
       }
       return (
-        <li className='field'>
+        <li key={field.name} className='field'>
           <span className='left'>
             <span className='field icon'>f</span>
             <span className='name'>{field.name}</span>

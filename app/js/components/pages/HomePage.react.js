@@ -11,11 +11,53 @@ import Struct from '../Struct';
 import UMLDiagram from '../UMLDiagram';
 import SearchBox from '../SearchBox';
 import MiniMap from '../MiniMap';
+import Button from '../Button';
 
 class HomePage extends Component {
   render() {
     const dispatch = this.props.dispatch;
-    const { projectName, ownerName } = this.props.data;
+    const {projectName, ownerName} = this.props.data;
+
+    let packageData = {
+      packages: [{
+        name: 'mainpkg',
+        files: [{
+          name: 'mainfile.go',
+          structs: [{
+            name: 'Op',
+            fields: [{
+              name: 'OpType',
+              type: 'string',
+            }, {
+              name: 'ServerId',
+              type: 'int',
+            }, {
+              name: 'Px',
+              type: '*Paxos',
+            }],
+          }, {
+            name: 'Paxos',
+            fields: [{
+              name: 'me',
+              type: 'int',
+            }, {
+              name: 'dead',
+              type: 'bool',
+            }, {
+              name: 'unreliable',
+              type: 'bool',
+            }, {
+              name: 'rpcCount',
+              type: 'int',
+            }, {
+              name: 'peers',
+              type: '[]string',
+            }],
+          }],
+        }],
+      }],
+    };
+
     return (
       <div className='HomePage'>
         <SearchBox
@@ -23,9 +65,19 @@ class HomePage extends Component {
           value='~/cse404/'
           placeholder='project directory...'
           />
-        <UMLDiagram />
+        <UMLDiagram
+          data={packageData}
+        />
         <SearchBox className='search' />
-        <MiniMap />
+        <div className='bottom-right'>
+          <Button
+            value='+'
+            onClick={this.addStruct.bind(this)}
+          />
+          <MiniMap
+            data={packageData}
+          />
+        </div>
         <h1>Hello Anwell and Grant!</h1>
         <h2>This is the demo for the <span className="home__text--red">{ projectName }</span> by <a href={'https://twitter.com/' + ownerName} >@{ ownerName }</a></h2>
         <label className="home__label">Change to your project name:
@@ -37,6 +89,10 @@ class HomePage extends Component {
         <Link className="btn" to="/readme">Setup</Link>
       </div>
     );
+  }
+
+  addStruct() {
+    console.log('add struct');
   }
 }
 

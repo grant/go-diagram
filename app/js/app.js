@@ -11,17 +11,6 @@
 import 'file?name=[name].[ext]!../manifest.json';
 import 'file?name=[name].[ext]!../.htaccess';
 
-// Check for ServiceWorker support before trying to install it
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/serviceworker.js').then(() => {
-    // Registration was successful
-  }).catch(() => {
-    // Registration failed
-  });
-} else {
-  // No ServiceWorker Support
-}
-
 // Import all the third party stuff
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -81,13 +70,13 @@ ReactDOM.render(
 );
 
 // TODO: Websocket integration
-(function() {
-    console.log('Initializing websockets...');
-    var conn = new WebSocket("ws://localhost:8080/ws?lastMod=143918dd9ce16851");
-    conn.onclose = function(evt) {
-        console.log('Connection closed');
-    }
-    conn.onmessage = function(evt) {
-        console.log('file updated', evt.data);
-    }
-})();
+// (function() {
+//     console.log('Initializing websockets...');
+//     var conn = new WebSocket("ws://localhost:8080/ws?lastMod=143918dd9ce16851");
+//     conn.onclose = function(evt) {
+//         console.log('Connection closed');
+//     }
+//     conn.onmessage = function(evt) {
+//         console.log('file updated', evt.data);
+//     }
+// })();

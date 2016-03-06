@@ -8,8 +8,10 @@
   position: absolute;
   left: 0;
   top: 0;
-  padding: 10px;
-  background-color: none;
+  margin: 10px;
+}
+.HomePage .current-directory .input {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .HomePage .UMLDiagram {
@@ -21,10 +23,11 @@
   position: absolute;
   top: 0;
   right: 0;
-  padding: 10px;
+  margin: 10px;
+  width: 200px;
 }
 
-.HomePage .MiniMap {
+.HomePage .bottom-right {
   position: absolute;
   bottom: 10px;
   right: 10px;

@@ -17,64 +17,54 @@ class UMLDiagram extends Component {
         x: 0,
         y: 0,
       },
+      data: props.data || {
+        packages: [
+          // files: [
+            // structs: [
+              // name: string
+              // fields: [
+                // name: string
+                // type: string
+              // ]
+            // ]
+          // ]
+        ],
+      },
     };
   }
 
   render() {
     let {x, y} = this.state.position;
+    var transformList = [`translate(${x}px, ${y}px)`];
+    if (this.props.miniMap) {
+      transformList.push('scale(0.3)');
+    }
     const transform = {
-      transform: `translate(${x}px, ${y}px)`
+      transform: transformList.join(' ')
     };
 
-    let packages = [];
-    let files = [];
-    let structs = [(
-      <Struct
-        name='Op'
-        fields={[{
-          name: 'OpType',
-          type: 'string',
-        }, {
-          name: 'ServerId',
-          type: 'int',
-        }, {
-          name: 'Px',
-          type: '*Paxos',
-        }]}
-      />
-    ), (
-      <Struct
-        name='Paxos'
-        fields={[{
-          name: 'me',
-          type: 'int',
-        }, {
-          name: 'dead',
-          type: 'bool',
-        }, {
-          name: 'unreliable',
-          type: 'bool',
-        }, {
-          name: 'rpcCount',
-          type: 'int',
-        }, {
-          name: 'peers',
-          type: '[]string',
-        }]}
-      />
-    )];
-
-    files[0] = (
-      <div className='file'>
-        {structs}
-      </div>
-    );
-
-    packages[0] = (
-      <section className='package'>
-        {files}
-      </section>
-    );
+    // Create the package innards
+    let packages = this.state.data.packages.map(pkg => {
+      return (
+        <section key={pkg.name} className='package'>
+          {pkg.files.map(file => {
+            return (
+              <div key={file.name} className='file'>
+                {file.structs.map(struct => {
+                  return (
+                    <Struct
+                      key={struct.name}
+                      name={struct.name}
+                      fields={struct.fields}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
+        </section>
+      );
+    });
 
     return (
       <div
@@ -83,12 +73,12 @@ class UMLDiagram extends Component {
         onMouseUp={this.onMouseUp.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}
         onMouseMove={this.onMouseMove.bind(this)}
-        >
+      >
         <div
           className='diagram'
           style={transform}
-          >
-          {packages}
+        >
+          {!!packages ? packages : ''}
         </div>
       </div>
     );
@@ -136,6 +126,10 @@ class UMLDiagram extends Component {
     }
   }
 }
+UMLDiagram.defaultProps = {
+  data: null,
+  miniMap: false,
+};
 
 // Wrap the component to inject dispatch and state into it
 export default UMLDiagram;
