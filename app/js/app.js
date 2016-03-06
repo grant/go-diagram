@@ -79,3 +79,15 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('ReactApp')
 );
+
+// TODO: Websocket integration
+(function() {
+    console.log('Initializing websockets...');
+    var conn = new WebSocket("ws://localhost:8080/ws?lastMod=143918dd9ce16851");
+    conn.onclose = function(evt) {
+        console.log('Connection closed');
+    }
+    conn.onmessage = function(evt) {
+        console.log('file updated', evt.data);
+    }
+})();
