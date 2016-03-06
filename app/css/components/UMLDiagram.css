@@ -1,3 +1,24 @@
 .UMLDiagram {
+  overflow: hidden;
+}
 
+.UMLDiagram.dragging {
+  cursor: move;
+}
+
+/* Package, File, Struct */
+.UMLDiagram .package,
+.UMLDiagram .file,
+.UMLDiagram .Struct {
+  margin: 20px;
+  display: inline-block;
+  box-shadow: 0px 0px 10px rgba(0,0,0,.3);
+}
+.UMLDiagram .package {
+  background-color: rgba(20, 200, 30, 0.2);
+  border-radius: 20px;
+}
+.UMLDiagram .file {
+  background-color: rgba(20, 30, 200, 0.2);
+  border-radius: 10px;
 }

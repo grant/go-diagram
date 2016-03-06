@@ -1,20 +1,20 @@
-.struct {
+.Struct {
   display: inline-block;
   border-radius: 3px;
   overflow: hidden;
 }
 
-.struct .header {
+.Struct .header {
   background-color: rgb(153, 153, 153);
   padding: 5px;
 }
-.struct .header .name {
+.Struct .header .name {
   padding-left: 5px;
   color: rgb(40, 40, 40);
   font-weight: 700;
 }
 
-.struct .icon {
+.Struct .icon {
   width: 14px;
   height: 14px;
   border-radius: 10px;
@@ -26,22 +26,22 @@
   margin-top: -3px;
 }
 
-.struct .class.icon {
+.Struct .class.icon {
   background-color: rgb(230, 126, 34);
   color: rgb(236, 240, 241);
 }
-.struct .field.icon {
+.Struct .field.icon {
   background-color: rgb(241, 196, 15);
   color: rgb(40, 40, 40);
 }
 
-.struct .fields {
+.Struct .fields {
   background-color: rgb(102, 102, 102);
   margin: 0;
   padding: 0;
 }
 
-.struct .fields > .field {
+.Struct .fields > .field {
   list-style-type: none;
   height: 30px;
   clear: both;
@@ -49,33 +49,33 @@
 }
 
 /* Struct field left/right */
-.struct .field .left, .struct .field .right {
+.Struct .field .left, .Struct .field .right {
   display: block;
   padding: 5px;
 }
-.struct .field .left {
+.Struct .field .left {
   float: left;
   color: rgb(236, 240, 241);
   /* Padding between left and right */
   padding-right: 20px;
 }
-.struct .field .right {
+.Struct .field .right {
   float: right;
 }
 
 /* Struct field contents */
-.struct .field .name {
+.Struct .field .name {
   padding-left: 5px;
 }
-.struct .field .type.int {
+.Struct .field .type.int {
   color: rgb(46, 204, 113);
 }
-.struct .field .type.bool {
+.Struct .field .type.bool {
   color: rgb(231, 76, 60);
 }
-.struct .field .type.string {
+.Struct .field .type.string {
   color: rgb(52, 152, 219);
 }
-.struct .field .type.other {
+.Struct .field .type.other {
   color: rgb(230, 126, 34);
 }

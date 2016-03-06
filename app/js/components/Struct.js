@@ -41,7 +41,7 @@ class Struct extends Component {
       );
     });
     return (
-      <div className='struct'>
+      <div className='Struct'>
         <header className='header'>
           <span className='class icon'>c</span>
           <span className='name'>{this.props.name}</span>

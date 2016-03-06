@@ -30,9 +30,7 @@ class SearchBox extends Component {
 
   changeHandler(e) {
     e.preventDefault();
-    const newState = this.state;
-    newState.query = e.target.value;
-    this.setState(newState);
+    this.setState({...this.state, query: e.target.value});
   }
 }
 SearchBox.defaultProps = {
