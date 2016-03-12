@@ -1,7 +1,7 @@
 {
-  "name": "reactjs-boilerplate",
-  "version": "2.4.0",
-  "description": "Quick setup for new React.js applications featuring Redux, hot–reloading, PostCSS, react-router and Mocha.",
+  "name": "go-diagram",
+  "version": "0.0.1",
+  "description": "A UML diagram editor for Golang projects.",
   "dependencies": {
     "fontfaceobserver": "^1.5.1",
     "history": "1.17.0",
@@ -59,7 +59,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/mxstbr/react-boilerplate.git"
+    "url": "git@github.com:grant/go-diagram.git"
   },
   "scripts": {
     "lint": "eslint .",
