@@ -1,6 +1,10 @@
+structIconSize = 14px
+structBorderRadius = 3px
+colorStructHeader = rgb(153, 153, 153)
+
 .Struct
   display inline-block
-  border-radius 3px
+  border-radius structBorderRadius
   overflow hidden
   input
     background-color transparent
@@ -8,7 +12,7 @@
     text-overflow ellipsis
   .header
     position relative
-    background-color rgb(153, 153, 153)
+    background-color colorStructHeader
     padding 5px
     .name
       padding-left 20px
@@ -28,8 +32,8 @@
       .p
         display none
   .icon
-    width 14px
-    height 14px
+    width structIconSize
+    height structIconSize
     border-radius 10px
     display inline-block
     font-size 9px

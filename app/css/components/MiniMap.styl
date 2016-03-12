@@ -1,8 +1,12 @@
+miniMapSize = 200px
+colorMiniMap = rgb(50, 50, 50)
+colorMiniMapBorder = gray
+
 .MiniMap
   .map
-    width 200px
-    height 200px
-    border 1px solid gray
-    background-color rgba(50, 50, 50, 0.2)
-    box-shadow 0px 0px 10px rgba(0,0,0,.3)
+    width miniMapSize
+    height miniMapSize
+    border 1px solid colorMiniMapBorder
+    background-color rgba(colorMiniMap, 0.2)
+    box-shadow 0px 0px 10px rgba(0, 0, 0, .3)
 

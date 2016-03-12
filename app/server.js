@@ -2,7 +2,7 @@
 
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
-var config = require('./webpack.prod.config');
+var config = require('./webpack.config.js');
 var ip = require("ip");
 
 console.log('Starting server from build folder...\n');

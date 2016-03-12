@@ -1,38 +1,40 @@
+umlBorderRadius = 10px
+umlPadding = 20px
+colorUMLSelectedShadow = rgb(241, 196, 15)
+colorUMLPackage = rgb(20, 200, 30)
+colorUMLFile = rgb(20, 30, 200)
+
 .UMLDiagram
   overflow hidden
   &.dragging
     cursor move
+  .package, .file, .Struct
+    margin umlPadding
+    display inline-block
+    box-shadow 0px 0px 10px rgba(0, 0, 0, .3)
+  .package, .file
+    position relative
+    padding-top 40px
+    & > .title
+      position absolute
+      width 100%
+      margin 0
+      text-align center
+      top 15px
+      color white
+      opacity 0.4
+      font-style italic
   .package
-    background-color rgba(20, 200, 30, 0.2)
-    border-radius 20px
+    background-color rgba(colorUMLPackage, 0.2)
+    border-radius umlBorderRadius * 2
     &.selected
-      background-color rgba(20, 200, 30, 0.5)
+      background-color rgba(colorUMLPackage, 0.5)
   .file
-    background-color rgba(20, 30, 200, 0.2)
-    border-radius 10apx
+    background-color rgba(colorUMLFile, 0.2)
+    border-radius umlBorderRadius
     &.selected
-      background-color rgba(20, 30, 200, 0.5)
+      background-color rgba(colorUMLFile, 0.5)
   .selected
-    box-shadow 0 0 10px rgba(241, 196, 15, 0.2)
+    box-shadow 0 0 10px rgba(colorUMLSelectedShadow, 0.2)
 
-.UMLDiagram .package,
-.UMLDiagram .file,
-.UMLDiagram .Struct
-  margin 20px
-  display inline-block
-  box-shadow 0px 0px 10px rgba(0,0,0,.3)
-
-.UMLDiagram .package, .UMLDiagram .file
-  position relative
-  padding-top 40px
-
-.UMLDiagram .file > .title, .UMLDiagram .package > .title
-  position absolute
-  width 100%
-  margin 0
-  text-align center
-  top 15px
-  color white
-  opacity 0.4
-  font-style italic
 

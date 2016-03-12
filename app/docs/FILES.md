@@ -18,7 +18,7 @@
 
   * `webpack.dev.config.js`: Generates the webpack configuration for development.
 
-  * `webpack.prod.config.js`: Generates the webpack configuration for production.
+  * `webpack.config.js`: Generates the webpack configuration for production.
 
 * `manifest.json`: On Chrome for Android (soon hopefully more browsers), users can add a webpage to the homescreen. This file specifies the name/icon/... that is displayed.
 
@@ -26,6 +26,6 @@
 
 * `server.dev.js`: The development server that runs when `npm start` is entered into the command line.
 
-* `server.prod.js`: The server that runs when `npm run serve` is entered into the command line.
+* `server.js`: The server that runs when `npm run serve` is entered into the command line.
 
 * `serviceworker.js`: The script that tells the serviceworker how to cache our files for offline usage.
