@@ -36,7 +36,7 @@ class SearchBox extends Component {
     );
   }
 
-  changeHandler(e) {
+  changeHandler(e: Event) {
     e.preventDefault();
     this.setState({...this.state, query: e.target.value});
   }

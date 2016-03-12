@@ -1,0 +1,92 @@
+.Struct
+  display inline-block
+  border-radius 3px
+  overflow hidden
+  input
+    background-color transparent
+    border none
+    text-overflow ellipsis
+  .header
+    position relative
+    background-color rgb(153, 153, 153)
+    padding 5px
+    .name
+      padding-left 20px
+      padding-right 5px
+      color rgb(40, 40, 40)
+      font-weight 700
+      white-space nowrap
+    .icon
+      overflow hidden
+      cursor pointer
+      &:hover
+        background-color rgb(46, 204, 113)
+        .c
+          display none
+        .p
+          display block
+      .p
+        display none
+  .icon
+    width 14px
+    height 14px
+    border-radius 10px
+    display inline-block
+    font-size 9px
+    font-weight 700
+    text-align center
+    position absolute
+    margin-top 5px
+  .class
+    &.icon
+      background-color rgb(230, 126, 34)
+      color rgb(236, 240, 241)
+  .field
+    &.icon
+      background-color rgb(241, 196, 15)
+      color rgb(40, 40, 40)
+      overflow hidden
+      cursor pointer
+      .f
+        display block
+      &:hover
+        background-color rgb(231, 76, 60)
+        .f
+          display none
+        .x
+          display block
+    .left
+      float left
+      color rgb(236, 240, 241)
+      padding-right 20px
+    .right
+      float right
+      input
+        text-align right
+    .name
+      padding-left 20px
+    .type
+      &.int
+        color rgb(46, 204, 113)
+      &.bool
+        color rgb(231, 76, 60)
+      &.string
+        color rgb(52, 152, 219)
+      &.other
+        color rgb(230, 126, 34)
+  .fields
+    margin 0
+    padding 0
+    & > .field
+      list-style-type none
+      height 30px
+      clear both
+      overflow hidden
+      background-color rgb(102, 102, 102)
+      &:hover
+        background-color rgb(130, 130, 130)
+
+.Struct .field .left, .Struct .field .right
+  display block
+  padding 5px
+

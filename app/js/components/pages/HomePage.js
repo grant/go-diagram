@@ -73,7 +73,7 @@ class HomePage extends Component {
         <div className='bottom-right'>
           <Button
             value='+'
-            onClick={this.addStruct.bind(this)}
+            onClick={HomePage.addStruct.bind(this)}
           />
           <MiniMap
             data={packageData}
@@ -92,7 +92,7 @@ class HomePage extends Component {
     );
   }
 
-  addStruct() {
+  static addStruct() {
     console.log('add struct');
   }
 }

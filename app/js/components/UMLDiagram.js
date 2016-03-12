@@ -1,4 +1,3 @@
-
 /*
  * UMLDiagram
  * This contains the whole UML diagram
@@ -11,7 +10,7 @@ import Struct from './Struct';
 // Gets the closest element that has class `classname`. Returns null if doesn't exist.
 let distFromParent = (element, classname) => {
   let searchClass = element.className || '';
-  if (searchClass.split(' ').indexOf(classname)>=0) return 0;
+  if (searchClass.split(' ').indexOf(classname) >= 0) return 0;
   if (element.parentNode) {
     let dist = distFromParent(element.parentNode, classname);
     if (dist !== null) {
@@ -50,13 +49,13 @@ class UMLDiagram extends Component {
       data: props.data || {
         packages: [
           // files: [
-            // structs: [
-              // name: string
-              // fields: [
-                // name: string
-                // type: string
-              // ]
-            // ]
+          // structs: [
+          // name: string
+          // fields: [
+          // name: string
+          // type: string
+          // ]
+          // ]
           // ]
         ],
       },
@@ -151,10 +150,8 @@ class UMLDiagram extends Component {
   }
 
   deselect(e) {
-    console.log('done')
     if (distFromParent(e.target, 'package') === null &&
-        distFromParent(e.target, 'file') === null) {
-      console.log('hi');
+      distFromParent(e.target, 'file') === null) {
       this.setState({
         ...this.state,
         selection: {
@@ -165,8 +162,8 @@ class UMLDiagram extends Component {
       });
     }
   }
+
   selectPackage(pkg) {
-    console.log('test')
     this.setState({
       ...this.state,
       selection: {
@@ -176,8 +173,8 @@ class UMLDiagram extends Component {
       }
     });
   }
+
   selectFile(path) {
-    console.log('test3')
     this.setState({
       ...this.state,
       selection: {
@@ -190,7 +187,6 @@ class UMLDiagram extends Component {
 
   onPackageClick(pkg, e) {
     // TODO Make a finer filter (don't include child clicks from structs)
-    console.log(distFromParent(e.target, 'file'), e.target)
     if (distFromParent(e.target, 'package') !== null && distFromParent(e.target, 'file') === null) {
       // select packge
       this.selectPackage(pkg)
@@ -209,12 +205,15 @@ class UMLDiagram extends Component {
   onMouseDown(e) {
     this.startDrag(e)
   }
+
   onMouseLeave(e) {
     this.stopDrag(e)
   }
+
   onMouseUp(e) {
     this.stopDrag(e)
   }
+
   onMouseMove(e) {
     if (this.state.dragging) {
       // update position

@@ -1,5 +1,4 @@
 /**
- *
  * App.react.js
  *
  * This component is the skeleton around the actual pages, and should only

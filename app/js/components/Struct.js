@@ -33,10 +33,11 @@ class Struct extends Component {
         name,
         ref,
         value,
-        onChange,
-      } = options;
+        onChange
+        } = options;
       value = value || '';
-      onChange = onChange || (() => {});
+      onChange = onChange || (() => {
+        });
       return (
         <AutosizeInput
           className={name}
@@ -114,7 +115,7 @@ class Struct extends Component {
     );
   }
 
-  onFieldTypeChange(key, e) {
+  onFieldTypeChange(key:String, e:Event) {
     let newFields = this.state.fields.slice(0);
     newFields[key].type = e.target.value;
     this.setState({
@@ -123,7 +124,7 @@ class Struct extends Component {
     });
   }
 
-  onFieldNameChange(key, e) {
+  onFieldNameChange(key:String, e:Event) {
     let newFields = this.state.fields.slice(0);
     newFields[key].name = e.target.value;
     this.setState({
@@ -141,7 +142,7 @@ class Struct extends Component {
     });
   }
 
-  onAddField(e) {
+  onAddField(e:Event) {
     this.refs[HEADER_REF].blur()
     let newFields = this.state.fields.slice(0);
     newFields.push({
@@ -158,7 +159,7 @@ class Struct extends Component {
     this.refs[HEADER_REF].select()
   }
 
-  onNameChange(e) {
+  onNameChange(e:Event) {
     this.setState({
       ...this.state,
       name: e.target.value,

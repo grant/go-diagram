@@ -28,13 +28,13 @@ openSansObserver.check().then(() => {
 });
 
 // Import the pages
-import HomePage from './components/pages/HomePage.react';
-import ReadmePage from './components/pages/ReadmePage.react';
-import NotFoundPage from './components/pages/NotFound.react';
-import App from './components/App.react';
+import HomePage from './components/pages/HomePage.js';
+import ReadmePage from './components/pages/ReadmePage.js';
+import NotFoundPage from './components/pages/NotFound.js';
+import App from './components/App.js';
 
 // Import the CSS file, which HtmlWebpackPlugin transfers to the build folder
-import '../css/main.css';
+//import '../css/index.styl';
 
 // Create the store with the redux-thunk middleware, which allows us
 // to do asynchronous things in the actions

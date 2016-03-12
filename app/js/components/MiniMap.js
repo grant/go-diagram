@@ -14,7 +14,6 @@ class MiniMap extends Component {
   }
 
   render() {
-    const dispatch = this.props.dispatch;
     return (
       <div className='MiniMap'>
         <div className='buttons'>
