@@ -7,7 +7,7 @@ import (
 	"go/format"
 	"go/parser"
 	"go/token"
-	//"reflect"
+	"reflect"
 	//"golang.org/x/tools/go/ast/astutil"
 	"bytes"
 )
@@ -17,9 +17,12 @@ type ListNode struct {
 	next *ListNode
 }
 
+// If the type represents a struct (not an alias or primitive), it will have a package and file name identifier
 type Type struct {
 	Literal string `json:"literal"`
-	Struct  string `json:"struct"` // If this type is or wraps a struct, the name of that struct (name conflicts?)
+	Package string `json:"package"`
+	File    string `json:"file"`
+	Struct  string `json:"struct"`
 }
 
 type Package struct {
@@ -56,6 +59,7 @@ type EdgeCasesStruct struct {
 	A      *[]int
 	F      func()
 	string // unnamed field
+	B      *ast.Node
 }
 
 func test() {
@@ -84,7 +88,8 @@ func GetStructsFile(fset *token.FileSet, f *ast.File, fname string) File {
 								if err := format.Node(&buf, fset, field.Type); err != nil {
 									panic(err)
 								}
-								fieldtype := Type{Literal: string(buf.Bytes()), Struct: "TODO"}
+								stpackage, stfile, stname = GetType(field.Type)
+								fieldtype := Type{Literal: string(buf.Bytes()), Package: stpackage, File: stfile, Struct: stname}
 								fi := Field{Name: name.Name, Type: fieldtype}
 								fields = append(fields, fi)
 							}
@@ -130,13 +135,24 @@ func GetStructsDirName(path string) []Package {
 }
 
 // Adds * for StarExpr, prints name for Ident, TODO: ignores other expressions
-func GetTypeName(node ast.Expr) string {
+func GetType(node ast.Expr) (string, string, string) {
 	switch node.(type) {
 	case *ast.Ident:
 		return node.(*ast.Ident).Name
+	case *ast.ArrayType:
+		return GetType(node.(*ast.ArrayType).Elt)
+	case *ast.MapType:
+		// TODO: also handle the value
+		return GetType(node.(*ast.MapType).Key)
 	case *ast.StarExpr:
-		return "*" + GetTypeName(node.(*ast.StarExpr).X)
+		return GetType(node.(*ast.StarExpr).X)
+	case *ast.FuncType:
+		return "TODO"
+	case *ast.SelectorExpr:
+		fmt.Println(reflect.TypeOf(node.(*ast.SelectorExpr).X.(*ast.Ident).Name))
+		return "TODO"
 	default:
-		return ""
+		fmt.Println(reflect.TypeOf(node))
+		panic("Need to cover all Type Exprs")
 	}
 }
