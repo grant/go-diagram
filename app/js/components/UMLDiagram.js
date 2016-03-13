@@ -49,6 +49,7 @@ class UMLDiagram extends Component {
       data: props.data || {
         packages: [
           // files: [
+          // name: string
           // structs: [
           // name: string
           // fields: [
