@@ -16,7 +16,7 @@ import (
 type Type struct {
 	Literal string `json:"literal"`
 	// Package string `json:"package"`
-	Struct string `json:"struct"`
+	Structs []string `json:"structs"`
 }
 
 type ClientStruct struct {
@@ -73,7 +73,7 @@ func GetStructsFile(fset *token.FileSet, f *ast.File, fname string) File {
 								// stpackage, stname = GetType(field.Type)
 								// fieldtype := Type{Literal: string(buf.Bytes()), Package: stpackage, Struct: stname}
 								stname := GetType(field.Type)
-								fieldtype := Type{Literal: string(buf.Bytes()), Struct: stname}
+								fieldtype := Type{Literal: string(buf.Bytes()), Structs: stname}
 								fi := Field{Name: name.Name, Type: fieldtype}
 								fields = append(fields, fi)
 							}
@@ -119,10 +119,10 @@ func GetStructsDirName(path string) ([]Package, map[string]*ast.Package) {
 }
 
 // Adds * for StarExpr, prints name for Ident, TODO: ignores other expressions
-func GetType(node ast.Expr) string {
+func GetType(node ast.Expr) []string {
 	switch node.(type) {
 	case *ast.Ident:
-		return node.(*ast.Ident).Name
+		return []string{node.(*ast.Ident).Name}
 	case *ast.ArrayType:
 		return GetType(node.(*ast.ArrayType).Elt)
 	case *ast.MapType:
@@ -131,10 +131,10 @@ func GetType(node ast.Expr) string {
 	case *ast.StarExpr:
 		return GetType(node.(*ast.StarExpr).X)
 	case *ast.FuncType:
-		return "TODO"
+		return []string{"TODO"}
 	case *ast.SelectorExpr:
 		fmt.Println(reflect.TypeOf(node.(*ast.SelectorExpr).X.(*ast.Ident).Name))
-		return "TODO"
+		return []string{"TODO"}
 	default:
 		fmt.Println(reflect.TypeOf(node))
 		panic("Need to cover all Type Exprs")
@@ -189,9 +189,10 @@ func clientFileToDecls(clientfile File) []ast.Decl {
 		for _, clientfield := range clientstruct.Fields {
 			// TODO assuming literal == struct. Change to support more than ident
 			// TODO tags
+            // TODO support maps
 			field := ast.Field{
 				Names: []*ast.Ident{&ast.Ident{Name: clientfield.Name}},
-				Type:  ast.NewIdent(clientfield.Type.Struct)}
+				Type:  ast.NewIdent(clientfield.Type.Structs[0])}
 			fieldList = append(fieldList, &field)
 		}
 		fields := &ast.FieldList{List: fieldList}
