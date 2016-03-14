@@ -51,7 +51,7 @@ type Method struct {
 }
 
 func GetStructsFile(fset *token.FileSet, f *ast.File, fname string) File {
-	var structs []Struct
+	structs := []Struct{}
 	//ast.Print(fset, f)
 	// For all declarations
 	for _, d := range f.Decls {
@@ -60,7 +60,7 @@ func GetStructsFile(fset *token.FileSet, f *ast.File, fname string) File {
 			for _, s := range g.Specs {
 				if ts, ok := s.(*ast.TypeSpec); ok {
 					if st, ok := ts.Type.(*ast.StructType); ok {
-						var fields []Field
+						fields := []Field{}
 						for _, field := range st.Fields.List {
 							// TODO: why can a field have multiple names?
 							for _, name := range field.Names {
@@ -101,7 +101,7 @@ func GetStructsFileName(filename string) File {
 }
 
 func GetStructsDirName(path string) ([]Package, map[string]*ast.Package) {
-	var packages []Package
+	packages := []Package{}
 	fset := token.NewFileSet()
 
 	packagemap, err := parser.ParseDir(fset, path, nil, 0)
@@ -109,7 +109,7 @@ func GetStructsDirName(path string) ([]Package, map[string]*ast.Package) {
 		panic(err)
 	}
 	for packagename, packageval := range packagemap {
-		var files []File
+		files := []File{}
 		for fname, f := range packageval.Files {
 			files = append(files, GetStructsFile(fset, f, fname))
 		}
@@ -182,10 +182,10 @@ func clientFileToAST(clientfile File, f *ast.File) *ast.File {
 
 // Given a client-formatted File struct, return a list of AST declarations
 func clientFileToDecls(clientfile File) []ast.Decl {
-	var decls []ast.Decl
+	decls := []ast.Decl{}
 	for _, clientstruct := range clientfile.Structs {
 		decl := &ast.GenDecl{Tok: token.TYPE}
-		var fieldList []*ast.Field
+		fieldList := []*ast.Field{}
 		for _, clientfield := range clientstruct.Fields {
 			// TODO assuming literal == struct. Change to support more than ident
 			// TODO tags
@@ -207,7 +207,7 @@ func clientFileToDecls(clientfile File) []ast.Decl {
 
 func removeStructDecls(decls []ast.Decl) []ast.Decl {
 	// TODO type definitions that aren't structs
-	var newdecls []ast.Decl
+	newdecls := []ast.Decl{}
 	for _, decl := range decls {
 		if g, ok := decl.(*ast.GenDecl); !ok || g.Tok != token.TYPE {
 			newdecls = append(newdecls, decl)
