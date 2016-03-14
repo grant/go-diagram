@@ -99,6 +99,13 @@ class UMLDiagram extends Component {
                 })}
               >
                 <h3 className='title'>{file.name}</h3>
+                {/*<Button
+                 value='+'
+                 onClick={this.addStruct.bind(this, {
+                 package: pkg.name,
+                 file: file.name,
+                 })}
+                 />*/}
                 {file.structs.map(struct => {
                   return (
                     <Struct
@@ -173,6 +180,10 @@ class UMLDiagram extends Component {
         }
       });
     }
+  }
+
+  addStruct(foo) {
+
   }
 
   selectPackage(pkg) {

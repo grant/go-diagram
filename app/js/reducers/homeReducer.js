@@ -137,12 +137,12 @@ function homeReducer(state = initialState, action) {
       newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex].fields.splice(action.struct.key, 1);
       return newState;
     },
+    [AppConstants.SET_PACKAGE_DATA]: () => {
+      let newState = clone(state);
+      newState.packageData = action.packageData;
+      return newState;
+    },
   }[action.type];
-
-  //{
-  //  name: 'name',
-  //    type: 'type',
-  //}
 
   if (handler) {
     console.log(action);

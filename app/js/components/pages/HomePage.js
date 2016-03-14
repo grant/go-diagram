@@ -14,6 +14,7 @@ import MiniMap from '../MiniMap';
 import Button from '../Button';
 import * as AppActions from '../../actions/AppActions';
 import { bindActionCreators } from 'redux';
+import Connection from './utils/Connection';
 
 class HomePage extends Component {
   static get defaultProps() {
@@ -21,6 +22,18 @@ class HomePage extends Component {
       actions: {},
       data: {},
     };
+  }
+
+  constructor(props) {
+    super(props);
+    this.setUpConnection();
+  }
+
+  setUpConnection() {
+    Connection.setUp();
+    Connection.onMessage(({data: packageData}) => {
+      this.props.actions.setPackageData(packageData);
+    });
   }
 
   render() {
@@ -42,11 +55,7 @@ class HomePage extends Component {
           data={packageData}
         />
         <SearchBox className='search' />
-        <div className='bottom-right'>
-          <Button
-            value='+'
-            onClick={HomePage.addStruct.bind(this)}
-          />
+        <div classname='bottom-right'>
           {/*<MiniMap
            data={packageData}
            />*/}
@@ -62,10 +71,6 @@ class HomePage extends Component {
         <Link className="btn" to="/readme">Setup</Link>
       </div>
     );
-  }
-
-  static addStruct() {
-    console.log('add struct');
   }
 }
 

@@ -48,7 +48,7 @@ export function asyncChangeOwnerName(name) {
 }
 
 export function changeProjectName(name) {
-  return { type: AppConstants.CHANGE_PROJECT_NAME, name };
+  return {type: AppConstants.CHANGE_PROJECT_NAME, name};
 }
 
 export function changeOwnerName(name) {
@@ -90,10 +90,16 @@ export function addStructField(struct) {
   };
 }
 
-
 export function removeStructField(struct) {
   return {
     type: AppConstants.REMOVE_STRUCT_FIELD,
     struct,
+  };
+}
+
+export function setPackageData(packageData) {
+  return {
+    type: AppConstants.SET_PACKAGE_DATA,
+    packageData,
   };
 }
