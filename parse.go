@@ -12,16 +12,10 @@ import (
 	"bytes"
 )
 
-type ListNode struct {
-	data int32
-	next *ListNode
-}
-
 // If the type represents a struct (not an alias or primitive), it will have a package and file name identifier
 type Type struct {
 	Literal string `json:"literal"`
-	Package string `json:"package"`
-	File    string `json:"file"`
+	// Package string `json:"package"`
 	Struct  string `json:"struct"`
 }
 
@@ -52,22 +46,6 @@ type Method struct {
 	ReturnType []Type `json:"returnType"`
 }
 
-type EdgeCasesStruct struct {
-	x, y   int
-	u      float32
-	_      float32 // padding
-	A      *[]int
-	F      func()
-	string // unnamed field
-	B      *ast.Node
-}
-
-func test() {
-	structs := GetStructsFileName("parse.go")
-	structsJson, _ := json.Marshal(structs)
-	fmt.Println(string(structsJson))
-}
-
 func GetStructsFile(fset *token.FileSet, f *ast.File, fname string) File {
 	var structs []Struct
 	//ast.Print(fset, f)
@@ -88,8 +66,10 @@ func GetStructsFile(fset *token.FileSet, f *ast.File, fname string) File {
 								if err := format.Node(&buf, fset, field.Type); err != nil {
 									panic(err)
 								}
-								stpackage, stfile, stname = GetType(field.Type)
-								fieldtype := Type{Literal: string(buf.Bytes()), Package: stpackage, File: stfile, Struct: stname}
+								// stpackage, stname = GetType(field.Type)
+								// fieldtype := Type{Literal: string(buf.Bytes()), Package: stpackage, Struct: stname}
+                                stname := GetType(field.Type)
+								fieldtype := Type{Literal: string(buf.Bytes()), Struct: stname}
 								fi := Field{Name: name.Name, Type: fieldtype}
 								fields = append(fields, fi)
 							}
@@ -116,7 +96,7 @@ func GetStructsFileName(filename string) File {
 	return GetStructsFile(fset, f, filename)
 }
 
-func GetStructsDirName(path string) []Package {
+func GetStructsDirName(path string) ([]Package, map[string]*ast.Package) {
 	var packages []Package
 	fset := token.NewFileSet()
 
@@ -131,11 +111,11 @@ func GetStructsDirName(path string) []Package {
 		}
 		packages = append(packages, Package{Name: packagename, Files: files})
 	}
-	return packages
+	return packages, packagemap
 }
 
 // Adds * for StarExpr, prints name for Ident, TODO: ignores other expressions
-func GetType(node ast.Expr) (string, string, string) {
+func GetType(node ast.Expr) (string) {
 	switch node.(type) {
 	case *ast.Ident:
 		return node.(*ast.Ident).Name
@@ -155,4 +135,97 @@ func GetType(node ast.Expr) (string, string, string) {
 		fmt.Println(reflect.TypeOf(node))
 		panic("Need to cover all Type Exprs")
 	}
+}
+
+// (path, packages) -> (Write to directory)
+// Given a client side struct data structure, deserialize it into an AST
+// and write to the given directory
+func WriteClientPackages(dirpath string, pkgs map[string]*ast.Package, clientpackages []Package) {
+    for _, clientpackage := range clientpackages {
+        for _, clientfile := range clientpackage.Files {
+            packagename := clientpackage.Name;
+            packageast := pkgs[packagename];
+            // Get the AST with the matching file name
+            f := packageast.Files[clientfile.Name]
+
+            // Update the AST with the values from the client
+            f = clientFileToAST(clientfile, f)
+            writeFileAST(clientfile.Name, f)
+        }
+    }
+}
+// Write the given AST to the filepath
+func writeFileAST(filepath string, f *ast.File) {
+    fset := token.NewFileSet()
+    var buf bytes.Buffer
+	if err := format.Node(&buf, fset, f); err != nil {
+		panic(err)
+	}
+	fmt.Printf("Hi anwell %s", buf.Bytes())
+}
+
+// ClientFileToAST convert
+func clientFileToAST(clientfile File, f *ast.File) *ast.File {
+    f.Decls = removeStructDecls(f.Decls)
+    newstructs := clientFileToDecls(clientfile)
+    f.Decls = append(f.Decls, newstructs...)
+    return f
+}
+
+func newIdent(name string) ast.Ident {
+    return ast.Ident{Name: name}
+}
+
+// Given a client-formatted File struct, return a list of AST declarations
+func clientFileToDecls(clientfile File) []ast.Decl {
+    var decls []ast.Decl
+    for _, clientstruct := range clientfile.Structs {
+        decl := &ast.GenDecl{Tok: token.TYPE}
+        var fieldList []*ast.Field
+        for _, clientfield := range clientstruct.Fields {
+            // TODO assuming literal == struct. Change to support more than ident
+            // TODO tags
+            field := ast.Field{
+                Names: []*ast.Ident{&ast.Ident{Name: clientfield.Name}},
+                Type: ast.NewIdent(clientfield.Type.Struct)}
+            fieldList = append(fieldList, &field)
+        }
+        fields := &ast.FieldList{List: fieldList}
+        structExpr := &ast.StructType{Struct: token.NoPos, Fields: fields}
+        spec := ast.TypeSpec{
+            Name: ast.NewIdent(clientstruct.Name),
+            Type: structExpr}
+        decl.Specs = append(decl.Specs, &spec)
+        decls = append(decls, decl)
+    }
+    return decls
+}
+
+func removeStructDecls(decls []ast.Decl) []ast.Decl {
+    // TODO
+    return decls
+}
+
+
+// Test data structures and functions
+
+type EdgeCasesStruct struct {
+	x, y   int
+	u      float32
+	_      float32 // padding
+	A      *[]int
+	F      func()
+	string // unnamed field
+	B      *ast.Node
+}
+
+func test() {
+	structs := GetStructsFileName("parse.go")
+	structsJson, _ := json.Marshal(structs)
+	fmt.Println(string(structsJson))
+}
+
+type ListNode struct {
+	data int32
+	next *ListNode
 }
