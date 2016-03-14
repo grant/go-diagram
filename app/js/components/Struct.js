@@ -34,7 +34,6 @@ class Struct extends Component {
 
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       name: props.name,
       fields: props.fields,

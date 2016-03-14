@@ -14,7 +14,7 @@ import MiniMap from '../MiniMap';
 import Button from '../Button';
 import * as AppActions from '../../actions/AppActions';
 import { bindActionCreators } from 'redux';
-import Connection from './utils/Connection';
+import Connection from '../../utils/Connection';
 
 class HomePage extends Component {
   static get defaultProps() {
@@ -55,7 +55,7 @@ class HomePage extends Component {
           data={packageData}
         />
         <SearchBox className='search' />
-        <div classname='bottom-right'>
+        <div className='bottom-right'>
           {/*<MiniMap
            data={packageData}
            />*/}

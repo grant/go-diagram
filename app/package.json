@@ -67,8 +67,8 @@
     "lint": "eslint .",
     "test": "mocha --compilers js:babel-core/register --recursive",
     "test:watch": "npm test -- --watch",
-    "start": "cross-env NODE_ENV=development node server.dev.js",
-    "build": "npm run test && webpack --config webpack.config.js --progress --colors -p",
+    "start": "cross-env NODE_ENV=development node server.js",
+    "build": "webpack --config webpack.config.js --progress --colors -p",
     "dev": "webpack --watch --progress --profile --colors --hot --config webpack.config.js",
     "serve": "node server.js"
   },

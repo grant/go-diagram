@@ -30,6 +30,19 @@ class UMLDiagram extends Component {
     return {
       actions: {},
       data: null,
+      // {
+      // packages: [
+      // files: [
+      // name: string
+      // structs: [
+      // name: string
+      // fields: [
+      // name: string
+      // type: string
+      // ]
+      // ]
+      // ]
+      // }
       miniMap: false,
     };
   }
@@ -49,20 +62,6 @@ class UMLDiagram extends Component {
         x: 0,
         y: 0,
       },
-      data: props.data || {
-        packages: [
-          // files: [
-          // name: string
-          // structs: [
-          // name: string
-          // fields: [
-          // name: string
-          // type: string
-          // ]
-          // ]
-          // ]
-        ],
-      },
     };
   }
 
@@ -78,7 +77,7 @@ class UMLDiagram extends Component {
 
     // Create the package innards
     let selection = this.state.selection;
-    let packages = this.state.data.packages.map(pkg => {
+    let packages = this.props.data.packages.map(pkg => {
       return (
         <section
           ref={pkg.name}
