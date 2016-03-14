@@ -15,6 +15,7 @@
 import * as AppConstants from '../constants/AppConstants';
 import assignToEmpty from '../utils/assign';
 import _ from 'underscore';
+import Connection from '../utils/Connection';
 
 const initialState = {
   projectName: 'React.js Boilerplate',
@@ -144,8 +145,14 @@ function homeReducer(state = initialState, action) {
     },
   }[action.type];
 
+
   if (handler) {
-    return handler();
+    // 1. Process the action
+    let newState = handler();
+    // 2. Send the action
+    Connection.sendMessage(newState.packageData);
+    // 3. Render the new state
+    return newState;
   } else {
     console.log('Default event handler: ', action.type);
     return state;
