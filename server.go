@@ -7,8 +7,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	//"io/ioutil"
-    "go/ast"
+	"go/ast"
 	"log"
 	"net/http"
 	"os"
@@ -43,7 +42,7 @@ var (
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 	}
-    pkgs map[string]*ast.Package
+	pkgs map[string]*ast.Package
 )
 
 func readFileIfModified(lastMod time.Time) ([]Package, time.Time, error) {
@@ -58,7 +57,7 @@ func readFileIfModified(lastMod time.Time) ([]Package, time.Time, error) {
 	//if err != nil {
 	//	return nil, fi.ModTime(), err
 	//}
-    var structs []Package
+	var structs []Package
 	structs, pkgs = GetStructsDirName(filename)
 	return structs, fi.ModTime(), err
 }
