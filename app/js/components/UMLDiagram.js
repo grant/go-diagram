@@ -106,7 +106,12 @@ class UMLDiagram extends Component {
                       key={struct.name}
                       package={pkg.name}
                       file={file.name}
-                      onDelete={this.deleteStruct.bind(this)}
+                      onDelete={this.props.actions.deleteStruct}
+                      onNameChange={this.props.actions.changeStructName}
+                      onFieldTypeChange={this.props.actions.changeStructFieldType}
+                      onFieldNameChange={this.props.actions.changeStructFieldName}
+                      onAddField={this.props.actions.addStructField}
+                      onRemoveField={this.props.actions.removeStructField}
                       name={struct.name}
                       fields={struct.fields}
                     />
@@ -168,10 +173,6 @@ class UMLDiagram extends Component {
         }
       });
     }
-  }
-
-  deleteStruct(struct) {
-    this.props.actions.deleteStruct(struct);
   }
 
   selectPackage(pkg) {

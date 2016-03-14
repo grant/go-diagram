@@ -61,32 +61,95 @@ const initialState = {
   }
 };
 
+function clone(state) {
+  return assignToEmpty(state, {});
+}
+
+function getStructData(state, struct) {
+  let packages = state.packageData.packages;
+  let packageIndex = _.findIndex(packages, (pkg) => pkg.name === struct.package);
+  let files = packages[packageIndex].files;
+  let fileIndex = _.findIndex(files, (file) => file.name === struct.file);
+  let structs = files[fileIndex].structs;
+  let structIndex = _.findIndex(structs, (fileStructs) => fileStructs.name === struct.name);
+  return {
+    packageIndex,
+    fileIndex,
+    structIndex,
+  };
+}
+
 function homeReducer(state = initialState, action) {
   Object.freeze(state); // Don't mutate state directly, always use assign()!
-  switch (action.type) {
-    case AppConstants.CHANGE_OWNER_NAME:
+  const handler = {
+    [AppConstants.CHANGE_OWNER_NAME]: () => {
       return assignToEmpty(state, {
         ownerName: action.name
       });
-    case AppConstants.CHANGE_PROJECT_NAME:
+    },
+    [AppConstants.CHANGE_PROJECT_NAME]: () => {
       return assignToEmpty(state, {
         projectName: action.name
       });
-    case AppConstants.DELETE_STRUCT:
-      let deletingStruct = action.struct;
-
-      let packages = state.packageData.packages;
-      let packageIndex = _.findIndex(packages, (pkg) => pkg.name === deletingStruct.package);
-      let files = packages[packageIndex].files;
-      let fileIndex = _.findIndex(files, (file) => file.name === deletingStruct.file);
-      let structs = files[fileIndex].structs;
-      let structIndex = _.findIndex(structs, (fileStructs) => fileStructs.name === deletingStruct.name);
-
-      let newState = assignToEmpty(state, {});
-      newState.packageData.packages[packageIndex].files[fileIndex].structs.splice(structIndex, 1);
+    },
+    [AppConstants.DELETE_STRUCT]: () => {
+      let struct = getStructData(state, action.struct);
+      let newState = clone(state);
+      newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs.splice(struct.structIndex, 1);
       return newState;
-    default:
-      return state;
+    },
+    [AppConstants.CHANGE_STRUCT_NAME]: () => {
+      let struct = getStructData(state, action.struct);
+      let newState = clone(state);
+      let newStruct = newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex];
+      newStruct.name = action.struct.newName;
+      newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex] = newStruct;
+      return newState;
+    },
+    [AppConstants.CHANGE_STRUCT_FIELD_NAME]: () => {
+      let struct = getStructData(state, action.struct);
+      let newState = clone(state);
+      let newField = newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex].fields[action.struct.key];
+      newField.name = action.struct.newFieldName;
+      newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex].fields[action.struct.key] = newField;
+      return newState;
+    },
+    [AppConstants.CHANGE_STRUCT_FIELD_TYPE]: () => {
+      let struct = getStructData(state, action.struct);
+      let newState = clone(state);
+      let newField = newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex].fields[action.struct.key];
+      newField.type = action.struct.newFieldType;
+      newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex].fields[action.struct.key] = newField;
+      return newState;
+    },
+    [AppConstants.ADD_STRUCT_FIELD]: () => {
+      let struct = getStructData(state, action.struct);
+      let newState = clone(state);
+      newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex].fields.push({
+        name: '[name]',
+        type: '[type]',
+      });
+      return newState;
+    },
+    [AppConstants.REMOVE_STRUCT_FIELD]: () => {
+      let struct = getStructData(state, action.struct);
+      let newState = clone(state);
+      newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex].fields.splice(action.struct.key, 1);
+      return newState;
+    },
+  }[action.type];
+
+  //{
+  //  name: 'name',
+  //    type: 'type',
+  //}
+
+  if (handler) {
+    console.log(action);
+    return handler();
+  } else {
+    console.log('Default event handler: ', action.type);
+    return state;
   }
 }
 

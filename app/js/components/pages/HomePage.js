@@ -19,12 +19,11 @@ class HomePage extends Component {
   static get defaultProps() {
     return {
       actions: {},
-      data: null,
+      data: {},
     };
   }
 
   render() {
-    const dispatch = this.props.dispatch;
     const {
       projectName,
       ownerName,
@@ -48,9 +47,9 @@ class HomePage extends Component {
             value='+'
             onClick={HomePage.addStruct.bind(this)}
           />
-          <MiniMap
-            data={packageData}
-          />
+          {/*<MiniMap
+           data={packageData}
+           />*/}
         </div>
         <h1>Hello Anwell and Grant!</h1>
         <h2>This is the demo for the <span className="home__text--red">{ projectName }</span> by <a href={'https://twitter.com/' + ownerName} >@{ ownerName }</a></h2>

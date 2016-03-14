@@ -59,5 +59,41 @@ export function deleteStruct(struct) {
   return {
     type: AppConstants.DELETE_STRUCT,
     struct,
-  }
+  };
+}
+
+export function changeStructName(struct) {
+  return {
+    type: AppConstants.CHANGE_STRUCT_NAME,
+    struct,
+  };
+}
+
+export function changeStructFieldName(struct) {
+  return {
+    type: AppConstants.CHANGE_STRUCT_FIELD_NAME,
+    struct,
+  };
+}
+
+export function changeStructFieldType(struct) {
+  return {
+    type: AppConstants.CHANGE_STRUCT_FIELD_TYPE,
+    struct,
+  };
+}
+
+export function addStructField(struct) {
+  return {
+    type: AppConstants.ADD_STRUCT_FIELD,
+    struct,
+  };
+}
+
+
+export function removeStructField(struct) {
+  return {
+    type: AppConstants.REMOVE_STRUCT_FIELD,
+    struct,
+  };
 }
