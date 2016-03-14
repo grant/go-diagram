@@ -114,7 +114,7 @@ class Struct extends Component {
     return (
       <div className='Struct'>
         <header className='header'>
-          <span className='class icon' onClick={this.onAddField.bind(this)}>
+          <span className='class icon' onClick={::this.onAddField}>
             <span className='c'>c</span>
             <span className='p'>+</span>
           </span>
@@ -125,7 +125,7 @@ class Struct extends Component {
             onChange: this.onNameChange,
             onBlur: this.onNameBlur,
           })}
-          <span className='delete icon' onClick={this.onDelete.bind(this)}>x</span>
+          <span className='delete icon' onClick={::this.onDelete}>x</span>
         </header>
         <ol className='fields'>
           {fields}

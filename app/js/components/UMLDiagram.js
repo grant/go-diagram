@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import Struct from './Struct';
 import * as appActions from '../actions/AppActions';
 import { connect } from 'react-redux';
+import Button from './Button';
 
 // Helper
 // Gets the closest element that has class `classname`. Returns null if doesn't exist.
@@ -98,13 +99,13 @@ class UMLDiagram extends Component {
                 })}
               >
                 <h3 className='title'>{file.name}</h3>
-                {/*<Button
-                 value='+'
-                 onClick={this.addStruct.bind(this, {
-                 package: pkg.name,
-                 file: file.name,
-                 })}
-                 />*/}
+                <Button
+                  value='+'
+                  onClick={this.addStruct.bind(this, {
+                    package: pkg.name,
+                    file: file.name,
+                  })}
+                />
                 {file.structs.map(struct => {
                   return (
                     <Struct

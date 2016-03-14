@@ -20,7 +20,7 @@ type Type struct {
 }
 
 type ClientStruct struct {
-	Packages []Package `json:packages`
+	Packages []Package `json:"packages"`
 }
 
 type Package struct {
