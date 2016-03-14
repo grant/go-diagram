@@ -5,6 +5,8 @@
 
 import React, { Component } from 'react';
 import Struct from './Struct';
+import * as appActions from '../actions/AppActions';
+import { connect } from 'react-redux';
 
 // Helper
 // Gets the closest element that has class `classname`. Returns null if doesn't exist.
@@ -26,6 +28,7 @@ let distFromParent = (element, classname) => {
 class UMLDiagram extends Component {
   static get defaultProps() {
     return {
+      actions: {},
       data: null,
       miniMap: false,
     };
@@ -101,6 +104,9 @@ class UMLDiagram extends Component {
                     <Struct
                       ref={pkg.name + '/' + file.name + '/' + struct.name}
                       key={struct.name}
+                      package={pkg.name}
+                      file={file.name}
+                      onDelete={this.deleteStruct.bind(this)}
                       name={struct.name}
                       fields={struct.fields}
                     />
@@ -164,6 +170,10 @@ class UMLDiagram extends Component {
     }
   }
 
+  deleteStruct(struct) {
+    this.props.actions.deleteStruct(struct);
+  }
+
   selectPackage(pkg) {
     this.setState({
       ...this.state,
@@ -189,7 +199,7 @@ class UMLDiagram extends Component {
   onPackageClick(pkg, e) {
     // TODO Make a finer filter (don't include child clicks from structs)
     if (distFromParent(e.target, 'package') !== null && distFromParent(e.target, 'file') === null) {
-      // select packge
+      // select package
       this.selectPackage(pkg)
     }
   }

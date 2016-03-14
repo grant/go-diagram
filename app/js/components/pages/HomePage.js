@@ -12,52 +12,24 @@ import UMLDiagram from '../UMLDiagram';
 import SearchBox from '../SearchBox';
 import MiniMap from '../MiniMap';
 import Button from '../Button';
+import * as AppActions from '../../actions/AppActions';
+import { bindActionCreators } from 'redux';
 
 class HomePage extends Component {
+  static get defaultProps() {
+    return {
+      actions: {},
+      data: null,
+    };
+  }
+
   render() {
     const dispatch = this.props.dispatch;
-    const {projectName, ownerName} = this.props.data;
-
-    let packageData = {
-      packages: [{
-        name: 'mainpkg',
-        files: [{
-          name: 'mainfile.go',
-          structs: [{
-            // name: 'Op',
-            name: 'Opawaoiegiowegjwegioowjegiow egiowe gweig ',
-            fields: [{
-              name: 'OpType',
-              type: 'string',
-            }, {
-              name: 'ServerId',
-              type: 'int',
-            }, {
-              name: 'Px',
-              type: '*Paxos',
-            }],
-          }, {
-            name: 'Paxos',
-            fields: [{
-              name: 'me',
-              type: 'int',
-            }, {
-              name: 'dead',
-              type: 'bool',
-            }, {
-              name: 'unreliable',
-              type: 'bool',
-            }, {
-              name: 'rpcCount',
-              type: 'int',
-            }, {
-              name: 'peers',
-              type: '[]string',
-            }],
-          }],
-        }],
-      }],
-    };
+    const {
+      projectName,
+      ownerName,
+      packageData,
+      } = this.props.data;
 
     return (
       <div className='HomePage'>
@@ -67,6 +39,7 @@ class HomePage extends Component {
           placeholder='project directory...'
           />
         <UMLDiagram
+          actions={this.props.actions}
           data={packageData}
         />
         <SearchBox className='search' />
@@ -82,10 +55,10 @@ class HomePage extends Component {
         <h1>Hello Anwell and Grant!</h1>
         <h2>This is the demo for the <span className="home__text--red">{ projectName }</span> by <a href={'https://twitter.com/' + ownerName} >@{ ownerName }</a></h2>
         <label className="home__label">Change to your project name:
-          <input className="home__input" type="text" onChange={(evt) => { dispatch(asyncChangeProjectName(evt.target.value)); }} defaultValue="React.js Boilerplate" value={projectName} />
+          <input className="home__input" type="text" onChange={(evt) => { this.props.actions.asyncChangeProjectName(evt.target.value); }} defaultValue="React.js Boilerplate" value={projectName} />
         </label>
         <label className="home__label">Change to your name:
-          <input className="home__input" type="text" onChange={(evt) => { dispatch(asyncChangeOwnerName(evt.target.value)); }} defaultValue="mxstbr" value={ownerName} />
+          <input className="home__input" type="text" onChange={(evt) => { this.props.actions.asyncChangeOwnerName(evt.target.value); }} defaultValue="mxstbr" value={ownerName} />
         </label>
         <Link className="btn" to="/readme">Setup</Link>
       </div>
@@ -97,14 +70,17 @@ class HomePage extends Component {
   }
 }
 
-// REDUX STUFF
-
-// Which props do we want to inject, given the global state?
-function select(state) {
+function mapStateToProps(state) {
   return {
     data: state
   };
 }
 
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(AppActions, dispatch)
+  };
+}
+
 // Wrap the component to inject dispatch and state into it
-export default connect(select)(HomePage);
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

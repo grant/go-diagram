@@ -1,6 +1,18 @@
 structIconSize = 14px
 structBorderRadius = 3px
+headerPadding = 5px
+iconMargin = 5px
 colorStructHeader = rgb(153, 153, 153)
+colorHeaderTitle = rgb(40, 40, 40)
+colorClassIcon = rgb(230, 126, 34)
+colorClassIconHover = rgb(46, 204, 113)
+colorFieldIcon = rgb(241, 196, 15)
+colorFieldIconHover = rgb(231, 76, 60)
+colorTypeInt = rgb(46, 204, 113)
+colorTypeBool = rgb(231, 76, 60)
+colorTypeString = rgb(52, 152, 219)
+colorTypeOther = rgb(230, 126, 34)
+colorDelete = colorFieldIconHover
 
 .Struct
   display inline-block
@@ -13,24 +25,23 @@ colorStructHeader = rgb(153, 153, 153)
   .header
     position relative
     background-color colorStructHeader
-    padding 5px
+    padding headerPadding
     .name
       padding-left 20px
       padding-right 5px
-      color rgb(40, 40, 40)
+      color colorHeaderTitle
       font-weight 700
       white-space nowrap
     .icon
       overflow hidden
       cursor pointer
+      .p
+        display none
       &:hover
-        background-color rgb(46, 204, 113)
         .c
           display none
         .p
           display block
-      .p
-        display none
   .icon
     width structIconSize
     height structIconSize
@@ -40,14 +51,25 @@ colorStructHeader = rgb(153, 153, 153)
     font-weight 700
     text-align center
     position absolute
-    margin-top 5px
+    margin-top iconMargin
+    line-height 1.5
+  .delete
+    &.icon
+      background-color colorDelete
+      color rgb(236, 240, 241)
+      position absolute
+      right 0
+      top 0
+      margin (headerPadding + iconMargin) headerPadding headerPadding headerPadding
   .class
     &.icon
-      background-color rgb(230, 126, 34)
+      background-color colorClassIcon
       color rgb(236, 240, 241)
+      &:hover
+        background-color colorClassIconHover
   .field
     &.icon
-      background-color rgb(241, 196, 15)
+      background-color colorFieldIcon
       color rgb(40, 40, 40)
       overflow hidden
       cursor pointer
@@ -55,9 +77,8 @@ colorStructHeader = rgb(153, 153, 153)
         display block
       .f, .x
         height 100%
-        line-height 1.5
       &:hover
-        background-color rgb(231, 76, 60)
+        background-color colorDelete
         .f
           display none
         .x
@@ -74,13 +95,13 @@ colorStructHeader = rgb(153, 153, 153)
       padding-left 20px
     .type
       &.int
-        color rgb(46, 204, 113)
+        color colorTypeInt
       &.bool
-        color rgb(231, 76, 60)
+        color colorTypeBool
       &.string
-        color rgb(52, 152, 219)
+        color colorTypeString
       &.other
-        color rgb(230, 126, 34)
+        color colorTypeOther
   .fields
     margin 0
     padding 0

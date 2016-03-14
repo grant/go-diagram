@@ -2,9 +2,7 @@
  * Struct
  */
 
-import { asyncChangeProjectName, asyncChangeOwnerName } from '../actions/AppActions';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import AutosizeInput from 'react-input-autosize';
 
@@ -17,6 +15,8 @@ const STRUCT_MIN_WIDTH = 80;
 class Struct extends Component {
   static get defaultProps() {
     return {
+      package: '',
+      file: '',
       name: '',
       fields: [],
     };
@@ -24,7 +24,10 @@ class Struct extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {...props};
+    this.state = {
+      name: props.name,
+      fields: props.fields,
+    };
   }
 
   render() {
@@ -107,6 +110,7 @@ class Struct extends Component {
             value: this.state.name,
             onChange: this.onNameChange,
           })}
+          <span className='delete icon' onClick={this.onDelete.bind(this)}>x</span>
         </header>
         <ol className='fields'>
           {fields}
@@ -157,6 +161,14 @@ class Struct extends Component {
 
   onHeaderClick() {
     this.refs[HEADER_REF].select()
+  }
+
+  onDelete() {
+    this.props.onDelete({
+      package: this.props.package,
+      file: this.props.file,
+      name: this.props.name,
+    });
   }
 
   onNameChange(e:Event) {

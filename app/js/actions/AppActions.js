@@ -27,7 +27,7 @@
 // It makes more sense to have the asnyc actions before the non-async ones
 /* eslint-disable no-use-before-define */
 
-import { CHANGE_OWNER_NAME, CHANGE_PROJECT_NAME } from '../constants/AppConstants';
+import * as AppConstants from '../constants/AppConstants';
 
 export function asyncChangeProjectName(name) {
   return (dispatch) => {
@@ -48,9 +48,16 @@ export function asyncChangeOwnerName(name) {
 }
 
 export function changeProjectName(name) {
-  return { type: CHANGE_PROJECT_NAME, name };
+  return { type: AppConstants.CHANGE_PROJECT_NAME, name };
 }
 
 export function changeOwnerName(name) {
-  return { type: CHANGE_OWNER_NAME, name };
+  return {type: AppConstants.CHANGE_OWNER_NAME, name};
+}
+
+export function deleteStruct(struct) {
+  return {
+    type: AppConstants.DELETE_STRUCT,
+    struct,
+  }
 }
