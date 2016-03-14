@@ -36,9 +36,10 @@ const (
 )
 
 var (
-	addr     = flag.String("addr", ":"+port, "http service address")
-	filename string
-	upgrader = websocket.Upgrader{
+	addr      = flag.String("addr", ":"+port, "http service address")
+	dirname   string
+	filenames []string
+	upgrader  = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 	}
@@ -46,20 +47,36 @@ var (
 )
 
 func readFileIfModified(lastMod time.Time) ([]Package, time.Time, error) {
-	fi, err := os.Stat(filename)
-	if err != nil {
-		return nil, lastMod, err
+	if len(filenames) == 0 {
+		return runParser(lastMod, nil)
 	}
-	if !fi.ModTime().After(lastMod) {
-		return nil, lastMod, nil
+	for _, filename := range filenames {
+		fi, err := os.Stat(filename)
+		if err != nil || fi.ModTime().After(lastMod) {
+			fmt.Println(err)
+			return runParser(fi.ModTime(), err)
+		}
 	}
-	//p, err := ioutil.ReadFile(filename)
-	//if err != nil {
-	//	return nil, fi.ModTime(), err
-	//}
-	var structs []Package
-	structs, pkgs = GetStructsDirName(filename)
-	return structs, fi.ModTime(), err
+	return nil, lastMod, nil
+}
+
+////
+func runParser(lastMod time.Time, err error) ([]Package, time.Time, error) {
+	// TODO handle error
+	fmt.Println("run parser")
+	var clientpkgs []Package
+	clientpkgs, pkgs = GetStructsDirName(dirname)
+
+	// Set new files to watch
+	// TODO race conditions?
+	filenames = []string{}
+	for _, clientpkg := range clientpkgs {
+		for _, clientfile := range clientpkg.Files {
+			filenames = append(filenames, clientfile.Name)
+		}
+	}
+
+	return clientpkgs, lastMod, err
 }
 
 func reader(ws *websocket.Conn) {
@@ -68,15 +85,23 @@ func reader(ws *websocket.Conn) {
 	ws.SetReadDeadline(time.Now().Add(pongWait))
 	ws.SetPongHandler(func(string) error { ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		_, _, err := ws.ReadMessage()
-		if err != nil {
+		// fmt.Println("begin")
+		// _, message, _ := ws.ReadMessage()
+		// if err != nil {
+		//         fmt.Println(err)
+		//         break;
+		// }
+		var message []Package
+		if err := ws.ReadJSON(&message); err != nil {
+			fmt.Println(err)
 			break
 		}
+		WriteClientPackages(dirname, pkgs, message)
+		fmt.Println("Received client packages")
 	}
 }
 
 func writer(ws *websocket.Conn, lastMod time.Time) {
-	lastError := ""
 	pingTicker := time.NewTicker(pingPeriod)
 	fileTicker := time.NewTicker(filePeriod)
 	defer func() {
@@ -94,14 +119,8 @@ func writer(ws *websocket.Conn, lastMod time.Time) {
 			packages, lastMod, err = readFileIfModified(lastMod)
 
 			if err != nil {
-				if s := err.Error(); s != lastError {
-					lastError = s
-					//p = []byte(lastError)
-				}
-			} else {
-				lastError = ""
+				// tODO
 			}
-
 			if packages != nil {
 				fmt.Println("Pushing file change to client.")
 				ws.SetWriteDeadline(time.Now().Add(writeWait))
@@ -141,10 +160,9 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 	if flag.NArg() != 1 {
-		log.Fatal("filename not specified")
+		log.Fatal("dirname not specified")
 	}
-	filename = flag.Args()[0]
-	//http.HandleFunc("/", serveHome)
+	dirname = flag.Args()[0]
 	http.Handle("/", http.FileServer(http.Dir("./app/build")))
 	http.HandleFunc("/ws", serveWs)
 	fmt.Println("Listening on http://localhost:" + port)
