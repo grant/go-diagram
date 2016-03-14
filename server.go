@@ -91,7 +91,7 @@ func reader(ws *websocket.Conn) {
 		//         fmt.Println(err)
 		//         break;
 		// }
-		var message []Package
+		var message ClientStruct
 		if err := ws.ReadJSON(&message); err != nil {
 			fmt.Println(err)
 			break
