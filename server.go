@@ -124,7 +124,7 @@ func writer(ws *websocket.Conn, lastMod time.Time) {
 			if packages != nil {
 				fmt.Println("Pushing file change to client.")
 				ws.SetWriteDeadline(time.Now().Add(writeWait))
-				ws.WriteJSON(packages)
+				ws.WriteJSON(ClientStruct{Packages: packages})
 				//if err := ws.WriteMessage(websocket.TextMessage, p); err != nil {
 				//	return
 				//}

@@ -19,6 +19,10 @@ type Type struct {
 	Struct string `json:"struct"`
 }
 
+type ClientStruct struct {
+	Packages []Package `json:packages`
+}
+
 type Package struct {
 	Name  string `json:"name"`
 	Files []File `json:"files"`
