@@ -73,16 +73,8 @@ class Struct extends Component {
     };
 
     let fields = this.state.fields.map((field, i) => {
-      let typeClass;
-      if (field.type.includes('string')) {
-        typeClass = 'string';
-      } else if (field.type.includes('int')) {
-        typeClass = 'int';
-      } else if (field.type.includes('bool')) {
-        typeClass = 'bool';
-      } else {
-        typeClass = 'other';
-      }
+      const TYPES = ['string', 'int', 'bool'];
+      let typeClass = TYPES.indexOf(field.type.struct) !== -1 ? field.type.struct : 'other';
       return (
         <li key={i} className='field'>
           <span className='left'>
@@ -102,7 +94,7 @@ class Struct extends Component {
             {getInput({
               name: ['type', typeClass].join(' '),
               ref: FIELD_TYPE_PREFIX + i,
-              value: field.type,
+              value: field.type.literal,
               onChange: this.onFieldTypeChange.bind(this, i),
               onBlur: this.onFieldTypeBlur.bind(this, i),
             })}
