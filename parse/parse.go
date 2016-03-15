@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
-//"golang.org/x/tools/go/ast/astutil"
+	//"golang.org/x/tools/go/ast/astutil"
 	"bytes"
 )
 
@@ -125,10 +125,12 @@ func GetStructsFile(fset *token.FileSet, f *ast.File, fname string, packageName 
 // TODO use a map instead of this craziness
 func GetFileName(toNode *Node, pkgs []Package) string {
 	for _, pkg := range pkgs {
-		for _, file := range pkg.Files {
-			for _, st := range file.Structs {
-				if st.Name == toNode.StructName {
-					return file.Name
+		if pkg.Name == toNode.PackageName {
+			for _, file := range pkg.Files {
+				for _, st := range file.Structs {
+					if st.Name == toNode.StructName {
+						return file.Name
+					}
 				}
 			}
 		}
@@ -291,7 +293,7 @@ func writeFileAST(filepath string, f *ast.File) {
 	if err := format.Node(&buf, fset, f); err != nil {
 		panic(err)
 	}
-	err := ioutil.WriteFile(filepath + ".new", buf.Bytes(), 0644)
+	err := ioutil.WriteFile(filepath+".new", buf.Bytes(), 0644)
 	if err != nil {
 		panic(err)
 	}
