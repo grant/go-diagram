@@ -1,4 +1,4 @@
-package main
+package parse
 
 import (
 	"fmt"
@@ -8,7 +8,10 @@ import (
 	"go/token"
 	"go/types"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 	"reflect"
+	"strings"
 	//"golang.org/x/tools/go/ast/astutil"
 	"bytes"
 )
@@ -104,7 +107,6 @@ func GetStructsFile(fset *token.FileSet, f *ast.File, fname string, packageName 
 			}
 		}
 	}
-	fmt.Printf("%d structs found\n", len(structs))
 	return File{Name: fname, Structs: structs}, edges
 }
 
@@ -134,37 +136,71 @@ func GetFileName(toNode *Node, pkgs []Package) string {
 	// Because we don't index types like funcs yet, those won't be found
 	// and we can't find the filename. Just leave it as is for now. TODO
 	fmt.Println("Matching file not found for struct", toNode.StructName, "(probably a library package)")
-    return ""
+	return ""
 }
 
-func GetStructsDirName(path string) (*ClientStruct, map[string]*ast.Package) {
-	packages := []Package{}
-	edges := []Edge{}
-	fset := token.NewFileSet()
-
+func getPackagesEdgesDirName(path string, fset *token.FileSet) ([]Package, []Edge, map[string]*ast.Package) {
+	fmt.Println("Processing directory", path)
+	var packages []Package
+	var edges []Edge
 	packagemap, err := parser.ParseDir(fset, path, nil, 0)
 	if err != nil {
 		panic(err)
 	}
 	for packagename, packageval := range packagemap {
-		files := []File{}
-		for fname, f := range packageval.Files {
-			newfile, newedges := GetStructsFile(fset, f, fname, packagename)
-			files = append(files, newfile)
-			edges = append(edges, newedges...)
+		// TODO ignore main for now because of conflicts
+		// Assumes that packagenames are unique
+		if packagename != "main" {
+			files := []File{}
+			for fname, f := range packageval.Files {
+				newfile, newedges := GetStructsFile(fset, f, fname, packagename)
+				files = append(files, newfile)
+				edges = append(edges, newedges...)
+			}
+			packages = append(packages, Package{Name: packagename, Files: files})
 		}
-		packages = append(packages, Package{Name: packagename, Files: files})
 	}
+	return packages, edges, packagemap
+}
+
+func GetStructsDirName(path string) (*ClientStruct, map[string]*ast.Package) {
+	directories := []string{}
+	packages := []Package{}
+	edges := []Edge{}
+	pkgmap := map[string]*ast.Package{}
+	fset := token.NewFileSet()
+
+	directories = []string{path}
+	// Get all the directories
+	filepath.Walk(path, func(path string, f os.FileInfo, err error) error {
+		if f.IsDir() {
+			if !strings.Contains(path, "app") {
+				directories = append(directories, path)
+			}
+		}
+		return nil
+	})
+
+	for _, directory := range directories {
+		newpackages, newedges, newpkgmap := getPackagesEdgesDirName(directory, fset)
+		// Merge the packages, edges, and pkgmap from this directory with our other results
+		packages = append(packages, newpackages...)
+		edges = append(edges, newedges...)
+		for k, v := range newpkgmap {
+			pkgmap[k] = v
+		}
+	}
+
 	// The To Nodes in Edges are currently missing filename because that's unknown when we are going through the AST
 	// Here we fill in what the filename is
-    validedges := []Edge{}
+	validedges := []Edge{}
 	for _, edge := range edges {
-        if name := GetFileName(edge.To, packages); name != "" {
-	       	edge.To.FileName = name
-            validedges = append(validedges, edge)
-        }
+		if name := GetFileName(edge.To, packages); name != "" {
+			edge.To.FileName = name
+			validedges = append(validedges, edge)
+		}
 	}
-	return &ClientStruct{Packages: packages, Edges: validedges}, packagemap
+	return &ClientStruct{Packages: packages, Edges: validedges}, pkgmap
 }
 
 func isPrimitive(name string) bool {
@@ -173,9 +209,9 @@ func isPrimitive(name string) bool {
 			return true
 		}
 	}
-    if name == "error" || name == "byte" {
-        return true
-    }
+	if name == "error" || name == "byte" {
+		return true
+	}
 	return false
 }
 
@@ -238,6 +274,9 @@ func WriteClientPackages(dirpath string, pkgs map[string]*ast.Package, clientpac
 			// Get the AST with the matching file name
 			f := packageast.Files[clientfile.Name]
 
+			if f == nil {
+				fmt.Println("Couldn't find", packagename, packageast.Files, clientfile.Name)
+			}
 			// Update the AST with the values from the client
 			f = clientFileToAST(clientfile, f)
 			writeFileAST(clientfile.Name, f)

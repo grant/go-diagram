@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/grant/go-diagram/parse"
 	"runtime"
 )
 
@@ -46,7 +47,7 @@ var (
 	pkgs map[string]*ast.Package
 )
 
-func readFileIfModified(lastMod time.Time) (*ClientStruct, time.Time, error) {
+func readFileIfModified(lastMod time.Time) (*parse.ClientStruct, time.Time, error) {
 	if len(filenames) == 0 {
 		return runParser(lastMod, nil)
 	}
@@ -60,11 +61,10 @@ func readFileIfModified(lastMod time.Time) (*ClientStruct, time.Time, error) {
 	return nil, lastMod, nil
 }
 
-func runParser(lastMod time.Time, err error) (*ClientStruct, time.Time, error) {
+func runParser(lastMod time.Time, err error) (*parse.ClientStruct, time.Time, error) {
 	// TODO handle error
-	fmt.Println("run parser")
-    var clientstruct *ClientStruct
-	clientstruct, pkgs = GetStructsDirName(dirname)
+	var clientstruct *parse.ClientStruct
+	clientstruct, pkgs = parse.GetStructsDirName(dirname)
 
 	// Set new files to watch
 	// TODO race conditions?
@@ -80,7 +80,7 @@ func runParser(lastMod time.Time, err error) (*ClientStruct, time.Time, error) {
 
 func reader(ws *websocket.Conn) {
 	defer ws.Close()
-	ws.SetReadLimit(1000*512)
+	ws.SetReadLimit(1000 * 512)
 	ws.SetReadDeadline(time.Now().Add(pongWait))
 	ws.SetPongHandler(func(string) error { ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
@@ -90,12 +90,12 @@ func reader(ws *websocket.Conn) {
 		//         fmt.Println(err)
 		//         break;
 		// }
-		var message ClientStruct
+		var message parse.ClientStruct
 		if err := ws.ReadJSON(&message); err != nil {
 			fmt.Println(err)
 			break
 		}
-		WriteClientPackages(dirname, pkgs, message.Packages)
+		parse.WriteClientPackages(dirname, pkgs, message.Packages)
 		fmt.Println("Received client packages")
 	}
 }
@@ -111,7 +111,7 @@ func writer(ws *websocket.Conn, lastMod time.Time) {
 	for {
 		select {
 		case <-fileTicker.C:
-			var clientstruct *ClientStruct
+			var clientstruct *parse.ClientStruct
 			//var p []byte
 			var err error
 
