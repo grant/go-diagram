@@ -135,6 +135,10 @@ func GetType(node ast.Expr) []string {
 	case *ast.SelectorExpr:
 		fmt.Println(reflect.TypeOf(node.(*ast.SelectorExpr).X.(*ast.Ident).Name))
 		return []string{"TODO"}
+	case *ast.InterfaceType:
+		return []string{"TODO"}
+	case *ast.ChanType:
+		return []string{"TODO"}
 	default:
 		fmt.Println(reflect.TypeOf(node))
 		panic("Need to cover all Type Exprs")

@@ -81,7 +81,7 @@ func runParser(lastMod time.Time, err error) ([]Package, time.Time, error) {
 
 func reader(ws *websocket.Conn) {
 	defer ws.Close()
-	ws.SetReadLimit(512)
+	ws.SetReadLimit(1000*512)
 	ws.SetReadDeadline(time.Now().Add(pongWait))
 	ws.SetPongHandler(func(string) error { ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
@@ -96,7 +96,7 @@ func reader(ws *websocket.Conn) {
 			fmt.Println(err)
 			break
 		}
-		WriteClientPackages(dirname, pkgs, message)
+		WriteClientPackages(dirname, pkgs, message.Packages)
 		fmt.Println("Received client packages")
 	}
 }
