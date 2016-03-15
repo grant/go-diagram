@@ -139,6 +139,9 @@ class UMLDiagram extends Component {
         onMouseUp={this.onMouseUp.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}
         onMouseMove={this.onMouseMove.bind(this)}
+        onTouchStart={this.onMouseDown.bind(this)}
+        onTouchEnd={this.onMouseUp.bind(this)}
+        onTouchMove={this.onMouseMove.bind(this)}
         onClick={this.deselect.bind(this)}
       >
         <div
@@ -153,6 +156,12 @@ class UMLDiagram extends Component {
 
   startDrag(e) {
     let {pageX, pageY} = e;
+    if (!pageX  && !pageY) {
+      // Support touch
+      e.preventDefault()
+      pageX = e.touches[0].pageX;
+      pageY = e.touches[0].pageY;
+    }
     let {x, y} = this.state.position;
     this.setState({
       ...this.state,
@@ -242,6 +251,12 @@ class UMLDiagram extends Component {
     if (this.state.dragging) {
       // update position
       let {pageX, pageY} = e;
+      if (!pageX  && !pageY) {
+        // Support touch
+        e.preventDefault()
+        pageX = e.touches[0].pageX;
+        pageY = e.touches[0].pageY;
+      }
       let dragOrigin = this.state.dragOrigin;
       this.setState({
         ...this.state,

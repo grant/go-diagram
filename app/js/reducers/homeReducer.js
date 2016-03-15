@@ -163,7 +163,10 @@ function homeReducer(state = initialState, action) {
       let newState = clone(state);
       newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex].fields.push({
         name: '[name]',
-        type: '[type]',
+        type: {
+          literal: '[type]',
+          structs: [],
+        },
       });
       return newState;
     },

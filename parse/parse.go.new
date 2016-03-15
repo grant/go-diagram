@@ -24,7 +24,7 @@ type ClientStruct struct {
 	Edges    []Edge
 }
 type Package struct {
-	Name  strinawegg
+	Name  string
 	Files []File
 }
 type File struct {
