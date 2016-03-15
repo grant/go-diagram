@@ -31,8 +31,13 @@ class HomePage extends Component {
 
   setUpConnection() {
     Connection.setUp();
-    Connection.onMessage(({data: packageData}) => {
-      this.props.actions.setPackageData(packageData);
+    Connection.onMessage(e => {
+      let packageData = JSON.parse(e.data);
+      if (packageData.error) {
+        alert(packageData.error);
+      } else {
+        this.props.actions.setPackageData(packageData);
+      }
     });
   }
 

@@ -192,7 +192,7 @@ function homeReducer(state = initialState, action) {
     },
     [AppConstants.SET_PACKAGE_DATA]: () => {
       let newState = clone(state);
-      newState.packageData = JSON.parse(action.packageData);
+      newState.packageData = action.packageData;
       return newState;
     },
     [AppConstants.ADD_STRUCT]: () => {

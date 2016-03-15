@@ -268,7 +268,8 @@ func GetTypes(node ast.Expr, packageName string) ([]string, []*Node) {
 // (path, packages) -> (Write to directory)
 // Given a client side struct data structure, deserialize it into an AST
 // and write to the given directory
-func WriteClientPackages(dirpath string, pkgs map[string]*ast.Package, clientpackages []Package) {
+func WriteClientPackages(dirpath string, pkgs map[string]*ast.Package, clientpackages []Package) error {
+	var err error
 	for _, clientpackage := range clientpackages {
 		for _, clientfile := range clientpackage.Files {
 			packagename := clientpackage.Name
@@ -280,10 +281,14 @@ func WriteClientPackages(dirpath string, pkgs map[string]*ast.Package, clientpac
 				fmt.Println("Couldn't find", packagename, packageast.Files, clientfile.Name)
 			}
 			// Update the AST with the values from the client
-			f = clientFileToAST(clientfile, f)
+			f, err = clientFileToAST(clientfile, f)
+			if err != nil {
+				return err
+			}
 			writeFileAST(clientfile.Name, f)
 		}
 	}
+	return nil
 }
 
 // Write the given AST to the filepath
@@ -293,26 +298,39 @@ func writeFileAST(filepath string, f *ast.File) {
 	if err := format.Node(&buf, fset, f); err != nil {
 		panic(err)
 	}
-	err := ioutil.WriteFile(filepath+".new", buf.Bytes(), 0644)
+	err := ioutil.WriteFile(filepath, buf.Bytes(), 0644)
 	if err != nil {
 		panic(err)
 	}
 }
 
 // ClientFileToAST convert
-func clientFileToAST(clientfile File, f *ast.File) *ast.File {
-	newdecls := []ast.Decl{f.Decls[0]}
+func clientFileToAST(clientfile File, f *ast.File) (*ast.File, error) {
+	var newdecls []ast.Decl
+	if len(f.Decls) > 0 {
+		newdecls = []ast.Decl{f.Decls[0]}
+	} else {
+		newdecls = []ast.Decl{}
+	}
+
 	f.Decls = removeStructDecls(f.Decls)
-	newstructs := clientFileToDecls(clientfile)
+	newstructs, err := clientFileToDecls(clientfile)
+	if err != nil {
+		return nil, err
+	}
 	// Assume import is the first decl. Add typedefs after that
 	newdecls = append(newdecls, newstructs...)
-	newdecls = append(newdecls, f.Decls[1:]...)
+	if len(f.Decls) > 0 {
+		newdecls = append(newdecls, f.Decls[1:]...)
+	} else {
+		newdecls = append(newdecls, f.Decls...)
+	}
 	f.Decls = newdecls
-	return f
+	return f, nil
 }
 
 // Given a client-formatted File struct, return a list of AST declarations
-func clientFileToDecls(clientfile File) []ast.Decl {
+func clientFileToDecls(clientfile File) ([]ast.Decl, error) {
 	decls := []ast.Decl{}
 	for _, clientstruct := range clientfile.Structs {
 		decl := &ast.GenDecl{Tok: token.TYPE}
@@ -323,7 +341,7 @@ func clientFileToDecls(clientfile File) []ast.Decl {
 			// TODO support maps
 			parsedtype, err := parser.ParseExpr(clientfield.Type.Literal)
 			if err != nil {
-				panic(err)
+				return nil, err
 			}
 			field := ast.Field{
 				Names: []*ast.Ident{&ast.Ident{Name: clientfield.Name}},
@@ -338,7 +356,7 @@ func clientFileToDecls(clientfile File) []ast.Decl {
 		decl.Specs = append(decl.Specs, &spec)
 		decls = append(decls, decl)
 	}
-	return decls
+	return decls, nil
 }
 
 func removeStructDecls(decls []ast.Decl) []ast.Decl {
