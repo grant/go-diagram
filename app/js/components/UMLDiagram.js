@@ -187,7 +187,7 @@ class UMLDiagram extends Component {
           marker.setAttribute("markerHeight", "10");
           marker.setAttribute("orient", "auto");
           marker.setAttribute("refX", "0");
-          marker.setAttribute("refY", "0");
+          marker.setAttribute("refY", "2");
           marker.setAttribute("markerUnits", "strokeWidth");
         }
 
@@ -222,7 +222,7 @@ class UMLDiagram extends Component {
             d: `M ${start.x} ${start.y} q ${anchorX} ${anchorY} ${end.x - start.x} ${end.y - start.y}`
           });
         }
-      }, 1000);
+      }, 300);
 
       // TODO Make svg size less hacky
       return (
