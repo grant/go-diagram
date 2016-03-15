@@ -183,8 +183,8 @@ class UMLDiagram extends Component {
     }
   }
 
-  addStruct(foo) {
-
+  addStruct(file) {
+    this.props.actions.onAddStruct(file);
   }
 
   selectPackage(pkg) {

@@ -45,30 +45,21 @@ class HomePage extends Component {
 
     return (
       <div className='HomePage'>
-        <SearchBox
-          className='current-directory'
-          value='~/cse404/'
-          placeholder='project directory...'
-          />
+        {/*<SearchBox
+         className='current-directory'
+         value='~/cse404/'
+         placeholder='project directory...'
+         />*/}
         <UMLDiagram
           actions={this.props.actions}
           data={packageData}
         />
-        <SearchBox className='search' />
+        {/*<SearchBox className='search' />*/}
         <div className='bottom-right'>
           {/*<MiniMap
            data={packageData}
            />*/}
         </div>
-        <h1>Hello Anwell and Grant!</h1>
-        <h2>This is the demo for the <span className="home__text--red">{ projectName }</span> by <a href={'https://twitter.com/' + ownerName} >@{ ownerName }</a></h2>
-        <label className="home__label">Change to your project name:
-          <input className="home__input" type="text" onChange={(evt) => { this.props.actions.asyncChangeProjectName(evt.target.value); }} defaultValue="React.js Boilerplate" value={projectName} />
-        </label>
-        <label className="home__label">Change to your name:
-          <input className="home__input" type="text" onChange={(evt) => { this.props.actions.asyncChangeOwnerName(evt.target.value); }} defaultValue="mxstbr" value={ownerName} />
-        </label>
-        <Link className="btn" to="/readme">Setup</Link>
       </div>
     );
   }

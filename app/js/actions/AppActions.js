@@ -29,31 +29,31 @@
 
 import * as AppConstants from '../constants/AppConstants';
 
-export function asyncChangeProjectName(name) {
-  return (dispatch) => {
-    // You can do async stuff here!
-    // API fetching, Animations,...
-    // For more information as to how and why you would do this, check https://github.com/gaearon/redux-thunk
-    return dispatch(changeProjectName(name));
-  };
-}
-
-export function asyncChangeOwnerName(name) {
-  return (dispatch) => {
-    // You can do async stuff here!
-    // API fetching, Animations,...
-    // For more information as to how and why you would do this, check https://github.com/gaearon/redux-thunk
-    return dispatch(changeOwnerName(name));
-  };
-}
-
-export function changeProjectName(name) {
-  return {type: AppConstants.CHANGE_PROJECT_NAME, name};
-}
-
-export function changeOwnerName(name) {
-  return {type: AppConstants.CHANGE_OWNER_NAME, name};
-}
+//export function asyncChangeProjectName(name) {
+//  return (dispatch) => {
+//    // You can do async stuff here!
+//    // API fetching, Animations,...
+//    // For more information as to how and why you would do this, check https://github.com/gaearon/redux-thunk
+//    return dispatch(changeProjectName(name));
+//  };
+//}
+//
+//export function asyncChangeOwnerName(name) {
+//  return (dispatch) => {
+//    // You can do async stuff here!
+//    // API fetching, Animations,...
+//    // For more information as to how and why you would do this, check https://github.com/gaearon/redux-thunk
+//    return dispatch(changeOwnerName(name));
+//  };
+//}
+//
+//export function changeProjectName(name) {
+//  return {type: AppConstants.CHANGE_PROJECT_NAME, name};
+//}
+//
+//export function changeOwnerName(name) {
+//  return {type: AppConstants.CHANGE_OWNER_NAME, name};
+//}
 
 export function deleteStruct(struct) {
   return {
@@ -102,4 +102,11 @@ export function setPackageData(packageData) {
     type: AppConstants.SET_PACKAGE_DATA,
     packageData,
   };
+}
+
+export function onAddStruct(file) {
+  return {
+    type: AppConstants.ADD_STRUCT,
+    file
+  }
 }

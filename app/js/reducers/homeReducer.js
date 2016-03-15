@@ -30,31 +30,55 @@ const initialState = {
           name: 'Opawaoiegiowegjwegioowjegiow egiowe gweig ',
           fields: [{
             name: 'OpType',
-            type: 'string',
+            type: {
+              literal: 'string',
+              structs: ['string'],
+            },
           }, {
             name: 'ServerId',
-            type: 'int',
+            type: {
+              literal: 'int',
+              structs: ['int'],
+            },
           }, {
             name: 'Px',
-            type: '*Paxos',
+            type: {
+              literal: '*Paxos',
+              structs: ['Paxos']
+            },
           }],
         }, {
           name: 'Paxos',
           fields: [{
             name: 'me',
-            type: 'int',
+            type: {
+              literal: 'int',
+              structs: ['int'],
+            },
           }, {
             name: 'dead',
-            type: 'bool',
+            type: {
+              literal: 'bool',
+              structs: ['bool'],
+            },
           }, {
             name: 'unreliable',
-            type: 'bool',
+            type: {
+              literal: 'bool',
+              structs: ['bool'],
+            },
           }, {
             name: 'rpcCount',
-            type: 'int',
+            type: {
+              literal: 'int',
+              structs: ['int']
+            },
           }, {
             name: 'peers',
-            type: '[]string',
+            type: {
+              literal: '[]string',
+              structs: ['string']
+            },
           }],
         }],
       }],
@@ -66,12 +90,23 @@ function clone(state) {
   return assignToEmpty(state, {});
 }
 
-function getStructData(state, struct) {
+function getFileData(state, file) {
   let packages = state.packageData.packages;
-  let packageIndex = _.findIndex(packages, (pkg) => pkg.name === struct.package);
+  let packageIndex = _.findIndex(packages, (pkg) => pkg.name === file.package);
   let files = packages[packageIndex].files;
-  let fileIndex = _.findIndex(files, (file) => file.name === struct.file);
-  let structs = files[fileIndex].structs;
+  let fileIndex = _.findIndex(files, (f) => f.name === file.file);
+  return {
+    packageIndex,
+    fileIndex,
+  };
+}
+
+function getStructData(state, struct) {
+  let {
+    packageIndex,
+    fileIndex,
+    } = getFileData(state, struct);
+  let structs = state.packageData.packages[packageIndex].files[fileIndex].structs;
   let structIndex = _.findIndex(structs, (fileStructs) => fileStructs.name === struct.name);
   return {
     packageIndex,
@@ -119,7 +154,7 @@ function homeReducer(state = initialState, action) {
       let struct = getStructData(state, action.struct);
       let newState = clone(state);
       let newField = newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex].fields[action.struct.key];
-      newField.type = action.struct.newFieldType;
+      newField.type.literal = action.struct.newFieldType;
       newState.packageData.packages[struct.packageIndex].files[struct.fileIndex].structs[struct.structIndex].fields[action.struct.key] = newField;
       return newState;
     },
@@ -141,6 +176,15 @@ function homeReducer(state = initialState, action) {
     [AppConstants.SET_PACKAGE_DATA]: () => {
       let newState = clone(state);
       newState.packageData = JSON.parse(action.packageData);
+      return newState;
+    },
+    [AppConstants.ADD_STRUCT]: () => {
+      let newState = clone(state);
+      let file = getFileData(state, action.file);
+      newState.packageData.packages[file.packageIndex].files[file.fileIndex].structs.push({
+        name: '[name]',
+        fields: [],
+      });
       return newState;
     },
   }[action.type];

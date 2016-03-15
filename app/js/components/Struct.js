@@ -10,10 +10,9 @@ import AutosizeInput from 'react-input-autosize';
 const HEADER_REF = 'header-ref';
 const FIELD_NAME_PREFIX = 'name-';
 const FIELD_TYPE_PREFIX = 'type-';
-const STRUCT_MIN_WIDTH = 80;
+const STRUCT_MIN_WIDTH = 120;
 
 const noop = () => {
-  "use strict";
 };
 
 class Struct extends Component {
@@ -128,7 +127,7 @@ class Struct extends Component {
 
   onFieldTypeChange(key:Number, e:Event) {
     let newFields = this.state.fields.slice(0);
-    newFields[key].type = e.target.value;
+    newFields[key].type.literal = e.target.value;
     this.setState({
       ...this.state,
       fields: newFields,
