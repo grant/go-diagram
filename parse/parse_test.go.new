@@ -1,0 +1,25 @@
+package parse
+
+import (
+	"go/ast"
+	"testing"
+)
+
+type EdgeCasesStruct struct {
+	x int
+	y int
+	u float32
+	_ float32
+	A *[]int
+	F func()
+	B *ast.Node
+}
+type ListNode struct {
+	data int32
+	next *ListNode
+}
+
+func TestWriteClientPackages(t *testing.T) {
+	clientpkgs, pkgmap, _ := GetStructsDirName(".")
+	WriteClientPackages("nono", pkgmap, clientpkgs)
+}

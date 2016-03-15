@@ -211,7 +211,9 @@ function homeReducer(state = initialState, action) {
     // 1. Process the action
     let newState = handler();
     // 2. Send the action
-    Connection.sendMessage(newState.packageData);
+    if (action.type !== AppConstants.SET_PACKAGE_DATA) {
+      Connection.sendMessage(newState.packageData);
+    }
     // 3. Render the new state
     return newState;
   } else {

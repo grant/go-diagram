@@ -163,6 +163,7 @@ class UMLDiagram extends Component {
       let structRef = this.refs[getStructRef(pkg, file, struct)];
       let structNode = ReactDOM.findDOMNode(structRef);
       let $structNode = $(structNode);
+      //let structHeight = $structNode.height();
       let structNodeOffset = $structNode.offset();
 
       if (!$structNode.offset()) {
@@ -170,9 +171,11 @@ class UMLDiagram extends Component {
         return null;
       }
 
+      let x = structNodeOffset.left - this.state.position.x;
+      let y = structNodeOffset.top - this.state.position.y;
       return {
-        x: structNodeOffset.left - this.state.position.x,
-        y: structNodeOffset.top - this.state.position.y,
+        x,
+        y,
       };
     };
 
@@ -229,7 +232,7 @@ class UMLDiagram extends Component {
         <svg xmlns="http://www.w3.org/2000/svg" width="10000px" height="10000px">
           <defs>
             <marker id="head">
-              <path d="M0,0 L0,4 L6,2 z" />
+              <path d="M0,0 L0,4 L6,2 z"/>
             </marker>
           </defs>
           {this.props.data.edges.map(edge => {
