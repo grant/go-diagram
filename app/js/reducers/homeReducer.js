@@ -27,7 +27,7 @@ const initialState = {
         name: 'mainfile.go',
         structs: [{
           // name: 'Op',
-          name: 'Opawaoiegiowegjwegioowjegiow egiowe gweig ',
+          name: 'Something',
           fields: [{
             name: 'OpType',
             type: {
@@ -83,6 +83,20 @@ const initialState = {
         }],
       }],
     }],
+    edges: [{
+      from: {
+        fieldTypeName: "Px",
+        fileName: "mainfile.go",
+        packageName: "mainpkg",
+        structName: "Something",
+      },
+      to: {
+        fieldTypeName: "",
+        fileName: "mainfile.go",
+        packageName: "mainpkg",
+        structName: "Paxos",
+      },
+    }]
   }
 };
 

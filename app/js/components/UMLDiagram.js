@@ -4,10 +4,12 @@
  */
 
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import Struct from './Struct';
 import * as appActions from '../actions/AppActions';
 import { connect } from 'react-redux';
 import Button from './Button';
+import $ from 'jquery';
 
 // Helper
 // Gets the closest element that has class `classname`. Returns null if doesn't exist.
@@ -76,21 +78,27 @@ class UMLDiagram extends Component {
       transform: transformList.join(' ')
     };
 
+    // Ref helpers
+    let getPackageRef = (pkg) => pkg.name;
+    let getFileRef = (pkg, file) => getPackageRef(pkg) + '/' + file.name;
+    let getStructRef = (pkg, file, struct) => getPackageRef(pkg) + '/' + getFileRef(pkg, file) + '/' + struct.name;
+
     // Create the package innards
     let selection = this.state.selection;
     let packages = this.props.data.packages.map(pkg => {
       return (
         <section
-          ref={pkg.name}
+          ref={getPackageRef(pkg)}
           key={pkg.name}
           className={['package', (selection.pkg === pkg.name) ? 'selected' : ''].join(' ')}
           onClick={this.onPackageClick.bind(this, pkg)}
         >
           <h3 className='title'>{pkg.name}</h3>
           {pkg.files.map(file => {
+            //ref={getFileRef(pkg, file)}
             return (
               <div
-                ref={pkg.name + '/' + file.name}
+                ref={getFileRef(pkg, file)}
                 key={file.name}
                 className={['file', (selection.file === file.name) ? 'selected' : ''].join(' ')}
                 onClick={this.onFileClick.bind(this, {
@@ -110,7 +118,8 @@ class UMLDiagram extends Component {
                 {file.structs.map(struct => {
                   return (
                     <Struct
-                      ref={pkg.name + '/' + file.name + '/' + struct.name}
+                      className={getStructRef(pkg, file, struct)}
+                      ref={getStructRef(pkg, file, struct)}
                       key={struct.name}
                       package={pkg.name}
                       file={file.name}
@@ -132,6 +141,120 @@ class UMLDiagram extends Component {
       );
     });
 
+    let getXY = (fieldOrStruct) => {
+
+      //if (!fieldTypeName) {
+      //  // struct
+      //} else {
+      //  // field
+      //}
+      let pkg = {
+        name: fieldOrStruct.packageName
+      };
+      let file = {
+        name: fieldOrStruct.fileName
+      };
+      let struct = {
+        name: fieldOrStruct.structName
+      };
+      let fieldType = {
+        name: fieldOrStruct.fieldTypeName
+      };
+      let structRef = this.refs[getStructRef(pkg, file, struct)];
+      let structNode = ReactDOM.findDOMNode(structRef);
+      let $structNode = $(structNode);
+      let structNodeOffset = $structNode.offset();
+
+      if (!$structNode.offset()) {
+        console.log('ERROR BAD EDGE DATA', getStructRef(pkg, file, struct), structRef);
+        return null;
+      }
+
+      return {
+        x: structNodeOffset.left - this.state.position.x,
+        y: structNodeOffset.top - this.state.position.y,
+      };
+    };
+
+    const edgeClass = 'edgeline';
+    let edges = (() => {
+      // Setup line xy fix once structs are aligned correctly
+      setInterval(() => {
+        // Fning React doesn't support svg markerWidth/markerHeight/orient etc. Caps needed!
+        let marker = document.getElementsByTagName('marker')[0];
+        if (marker) {
+          marker.setAttribute("markerWidth", "10");
+          marker.setAttribute("markerHeight", "10");
+          marker.setAttribute("orient", "auto");
+          marker.setAttribute("refX", "0");
+          marker.setAttribute("refY", "0");
+          marker.setAttribute("markerUnits", "strokeWidth");
+        }
+
+        // SUPER HACK, passes data through ref
+        let edges = [];
+        for (let ref in this.refs) {
+          if (ref.startsWith('edge:')) {
+            edges.push({
+              ref,
+              data: JSON.parse(ref.split('edge:')[1]),
+            });
+          }
+        }
+
+        // Go through each edge ref and update xy
+        for (let {ref, data: {from, to}} of edges) {
+          let start = getXY(from);
+          let end = getXY(to);
+          if (!start || !end) {
+            continue; // Anwell made a edge data mistake
+          }
+
+          const curviness = 100;
+          let anchorX = (end.x - start.x) / 2;
+          let anchorY = (end.y - start.y) / 2 - curviness;
+          if (start.x === end.x) {
+            // Make left curve if line is vertical
+            anchorX -= curviness;
+            anchorY += curviness;
+          }
+          $(this.refs[ref]).attr({
+            d: `M ${start.x} ${start.y} q ${anchorX} ${anchorY} ${end.x - start.x} ${end.y - start.y}`
+          });
+        }
+      }, 1000);
+
+      // TODO Make svg size less hacky
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="10000px" height="10000px">
+          <defs>
+            <marker id="head">
+              <path d="M0,0 L0,4 L6,2 z" />
+            </marker>
+          </defs>
+          {this.props.data.edges.map(edge => {
+            // Render
+            // x1={startXY.x}
+            // y1={startXY.y}
+            // x2={endXY.x}
+            // y2={endXY.y}
+            let edgeRef = 'edge:' + JSON.stringify(edge);
+            return (
+              <path
+                ref={edgeRef}
+                className={edgeClass}
+                data-edgedata={JSON.stringify(edge)}
+                markerEnd='url(#head)'
+                stroke="black"
+                fill="none"
+                opacity="0.5"
+                strokeWidth="3"/>
+            );
+          })}
+        </svg>
+      );
+    })();
+
     return (
       <div
         className={`UMLDiagram ${this.state.dragging ? 'dragging' : ''}`}
@@ -148,7 +271,8 @@ class UMLDiagram extends Component {
           className='diagram'
           style={transform}
         >
-          {!!packages ? packages : ''}
+          <section className='packages'>{packages ? packages : ''}</section>
+          <section className='edges'>{edges ? edges : ''}</section>
         </div>
       </div>
     );
@@ -156,7 +280,7 @@ class UMLDiagram extends Component {
 
   startDrag(e) {
     let {pageX, pageY} = e;
-    if (!pageX  && !pageY) {
+    if (!pageX && !pageY) {
       // Support touch
       e.preventDefault()
       pageX = e.touches[0].pageX;
@@ -251,7 +375,7 @@ class UMLDiagram extends Component {
     if (this.state.dragging) {
       // update position
       let {pageX, pageY} = e;
-      if (!pageX  && !pageY) {
+      if (!pageX && !pageY) {
         // Support touch
         e.preventDefault()
         pageX = e.touches[0].pageX;

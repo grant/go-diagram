@@ -18,6 +18,7 @@ const noop = () => {
 class Struct extends Component {
   static get defaultProps() {
     return {
+      className: '',
       package: '',
       file: '',
       name: '',
@@ -103,7 +104,7 @@ class Struct extends Component {
     });
 
     return (
-      <div className='Struct'>
+      <div className={'Struct ' + this.props.className} >
         <header className='header'>
           <span className='class icon' onClick={::this.onAddField}>
             <span className='c'>c</span>

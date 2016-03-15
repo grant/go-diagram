@@ -10,44 +10,50 @@ addStructButtonSize = 30px
   overflow hidden
   &.dragging
     cursor move
-  .package, .file, .Struct
-    margin umlPadding
-    display inline-block
-    box-shadow 0px 0px 10px rgba(0, 0, 0, .3)
-  .package, .file
-    position relative
-    padding-top 40px
-    & > .title
-      position absolute
-      width 100%
-      margin 0
-      text-align center
-      top 15px
-      color white
-      opacity 0.4
-      font-style italic
-      overflow hidden
-      text-overflow ellipsis
-      line-height 1.5
-      padding 0 umlBorderRadius
-  .package
-    background-color rgba(colorUMLPackage, 0.2)
-    border-radius umlBorderRadius * 2
-    &.selected
-      background-color rgba(colorUMLPackage, 0.5)
-  .file
-    background-color rgba(colorUMLFile, 0.2)
-    border-radius umlBorderRadius
-    min-width fileMinWidth
-    &.selected
-      background-color rgba(colorUMLFile, 0.5)
-    .addStruct
-      position absolute
-      top umlBorderRadius
-      right umlBorderRadius
-      width: addStructButtonSize
-      height: addStructButtonSize
-  .selected
-    box-shadow 0 0 10px rgba(colorUMLSelectedShadow, 0.2)
-
+  .packages, .edges
+    position absolute
+  .packages
+    .package, .file, .Struct
+      margin umlPadding
+      display inline-block
+      box-shadow 0px 0px 10px rgba(0, 0, 0, .3)
+    .package, .file
+      position relative
+      padding-top 40px
+      & > .title
+        position absolute
+        width 100%
+        margin 0
+        text-align center
+        top 15px
+        color white
+        opacity 0.4
+        font-style italic
+        overflow hidden
+        text-overflow ellipsis
+        line-height 1.5
+        padding 0 umlBorderRadius
+    .package
+      background-color rgba(colorUMLPackage, 0.2)
+      border-radius umlBorderRadius * 2
+      &.selected
+        background-color rgba(colorUMLPackage, 0.5)
+    .file
+      background-color rgba(colorUMLFile, 0.2)
+      border-radius umlBorderRadius
+      min-width fileMinWidth
+      &.selected
+        background-color rgba(colorUMLFile, 0.5)
+      .addStruct
+        position absolute
+        top umlBorderRadius
+        right umlBorderRadius
+        width: addStructButtonSize
+        height: addStructButtonSize
+    .selected
+      box-shadow 0 0 10px rgba(colorUMLSelectedShadow, 0.2)
+  .edges
+    pointer-events none
+    .edge
+      color blue
 
