@@ -20,6 +20,10 @@ import (
 	"runtime"
 )
 
+type ClientError struct {
+	Error string `json:"error"`
+}
+
 const (
 	// Time allowed to write the file to the client.
 	writeWait = 10 * time.Second
@@ -45,6 +49,9 @@ var (
 		WriteBufferSize: 1024,
 	}
 	pkgs map[string]*ast.Package
+
+	// TODO yes global error state is disgusting. Sue me.
+	globError error
 )
 
 func readFileIfModified(lastMod time.Time) (*parse.ClientStruct, time.Time, error) {
@@ -95,7 +102,7 @@ func reader(ws *websocket.Conn) {
 			fmt.Println(err)
 			break
 		}
-		parse.WriteClientPackages(dirname, pkgs, message.Packages)
+		globError = parse.WriteClientPackages(dirname, pkgs, message.Packages)
 		fmt.Println("Received client packages")
 	}
 }
@@ -113,14 +120,18 @@ func writer(ws *websocket.Conn, lastMod time.Time) {
 		case <-fileTicker.C:
 			var clientstruct *parse.ClientStruct
 			//var p []byte
-			var err error
+			// var err error
 
-			clientstruct, lastMod, err = readFileIfModified(lastMod)
+			clientstruct, lastMod, _ = readFileIfModified(lastMod)
 
-			if err != nil {
-				// tODO
-			}
-			if clientstruct != nil {
+			// TODO err
+
+			if globError != nil {
+				fmt.Println("error detected", globError.Error())
+				ws.SetWriteDeadline(time.Now().Add(writeWait))
+				ws.WriteJSON(ClientError{Error: globError.Error()})
+				globError = nil
+			} else if clientstruct != nil {
 				fmt.Println("Pushing file change to client.")
 				ws.SetWriteDeadline(time.Now().Add(writeWait))
 				ws.WriteJSON(clientstruct)
