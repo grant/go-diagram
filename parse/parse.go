@@ -140,7 +140,6 @@ func GetFileName(toNode *Node, pkgs []Package) string {
 }
 
 func getPackagesEdgesDirName(path string, fset *token.FileSet) ([]Package, []Edge, map[string]*ast.Package) {
-	fmt.Println("Processing directory", path)
 	var packages []Package
 	var edges []Edge
 	packagemap, err := parser.ParseDir(fset, path, nil, 0)
@@ -180,6 +179,7 @@ func GetStructsDirName(path string) (*ClientStruct, map[string]*ast.Package) {
 		}
 		return nil
 	})
+	fmt.Printf("Process %d directories\n", len(directories))
 
 	for _, directory := range directories {
 		newpackages, newedges, newpkgmap := getPackagesEdgesDirName(directory, fset)
@@ -299,9 +299,13 @@ func writeFileAST(filepath string, f *ast.File) {
 
 // ClientFileToAST convert
 func clientFileToAST(clientfile File, f *ast.File) *ast.File {
+	newdecls := []ast.Decl{f.Decls[0]}
 	f.Decls = removeStructDecls(f.Decls)
 	newstructs := clientFileToDecls(clientfile)
-	f.Decls = append(newstructs, f.Decls...)
+	// Assume import is the first decl. Add typedefs after that
+	newdecls = append(newdecls, newstructs...)
+	newdecls = append(newdecls, f.Decls[1:]...)
+	f.Decls = newdecls
 	return f
 }
 
