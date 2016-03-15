@@ -298,7 +298,7 @@ func writeFileAST(filepath string, f *ast.File) {
 	if err := format.Node(&buf, fset, f); err != nil {
 		panic(err)
 	}
-	err := ioutil.WriteFile(filepath+".new", buf.Bytes(), 0644)
+	err := ioutil.WriteFile(filepath, buf.Bytes(), 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -306,7 +306,13 @@ func writeFileAST(filepath string, f *ast.File) {
 
 // ClientFileToAST convert
 func clientFileToAST(clientfile File, f *ast.File) (*ast.File, error) {
-	newdecls := []ast.Decl{f.Decls[0]}
+	var newdecls []ast.Decl
+	if len(f.Decls) > 0 {
+		newdecls = []ast.Decl{f.Decls[0]}
+	} else {
+		newdecls = []ast.Decl{}
+	}
+
 	f.Decls = removeStructDecls(f.Decls)
 	newstructs, err := clientFileToDecls(clientfile)
 	if err != nil {
@@ -314,7 +320,11 @@ func clientFileToAST(clientfile File, f *ast.File) (*ast.File, error) {
 	}
 	// Assume import is the first decl. Add typedefs after that
 	newdecls = append(newdecls, newstructs...)
-	newdecls = append(newdecls, f.Decls[1:]...)
+	if len(f.Decls) > 0 {
+		newdecls = append(newdecls, f.Decls[1:]...)
+	} else {
+		newdecls = append(newdecls, f.Decls...)
+	}
 	f.Decls = newdecls
 	return f, nil
 }

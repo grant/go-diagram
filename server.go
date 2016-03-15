@@ -61,7 +61,7 @@ func readFileIfModified(lastMod time.Time) (*parse.ClientStruct, time.Time, erro
 	for _, filename := range filenames {
 		fi, err := os.Stat(filename)
 		if err != nil || fi.ModTime().After(lastMod) {
-			fmt.Println(err)
+			fmt.Println("Detected file change", err)
 			return runParser(fi.ModTime(), err)
 		}
 	}
