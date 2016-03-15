@@ -100,6 +100,7 @@ class UMLDiagram extends Component {
               >
                 <h3 className='title'>{file.name}</h3>
                 <Button
+                  className='addStruct'
                   value='+'
                   onClick={this.addStruct.bind(this, {
                     package: pkg.name,

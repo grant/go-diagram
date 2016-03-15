@@ -16,7 +16,6 @@ class Connection {
   }
 
   static sendMessage(newPackageData) {
-    console.log('sending', newPackageData);
     conn.send(JSON.stringify(newPackageData));
   }
 }

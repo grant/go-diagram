@@ -18,10 +18,9 @@ class Button extends Component {
   }
 
   render() {
-    const dispatch = this.props.dispatch;
     return (
       <input
-        className={`Button`}
+        className={`Button ${this.props.className || ''}`}
         type='button'
         onClick={this.props.onClick.bind(this)}
         value={this.props.value}

@@ -3,6 +3,8 @@ umlPadding = 20px
 colorUMLSelectedShadow = rgb(241, 196, 15)
 colorUMLPackage = rgb(20, 200, 30)
 colorUMLFile = rgb(20, 30, 200)
+fileMinWidth = 160px
+addStructButtonSize = 30px
 
 .UMLDiagram
   overflow hidden
@@ -24,6 +26,10 @@ colorUMLFile = rgb(20, 30, 200)
       color white
       opacity 0.4
       font-style italic
+      overflow hidden
+      text-overflow ellipsis
+      line-height 1.5
+      padding 0 umlBorderRadius
   .package
     background-color rgba(colorUMLPackage, 0.2)
     border-radius umlBorderRadius * 2
@@ -32,8 +38,15 @@ colorUMLFile = rgb(20, 30, 200)
   .file
     background-color rgba(colorUMLFile, 0.2)
     border-radius umlBorderRadius
+    min-width fileMinWidth
     &.selected
       background-color rgba(colorUMLFile, 0.5)
+    .addStruct
+      position absolute
+      top umlBorderRadius
+      right umlBorderRadius
+      width: addStructButtonSize
+      height: addStructButtonSize
   .selected
     box-shadow 0 0 10px rgba(colorUMLSelectedShadow, 0.2)
 
