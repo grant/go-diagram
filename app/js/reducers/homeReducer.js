@@ -20,83 +20,92 @@ import Connection from '../utils/Connection';
 const initialState = {
   projectName: 'React.js Boilerplate',
   ownerName: 'mxstbr',
-  packageData: {
+  packageData:
+    //packages: [{
+    //  name: 'mainpkg',
+    //  files: [{
+    //    name: 'mainfile.go',
+    //    structs: [{
+    //      // name: 'Op',
+    //      name: 'Something',
+    //      fields: [{
+    //        name: 'OpType',
+    //        type: {
+    //          literal: 'string',
+    //          structs: ['string'],
+    //        },
+    //      }, {
+    //        name: 'ServerId',
+    //        type: {
+    //          literal: 'int',
+    //          structs: ['int'],
+    //        },
+    //      }, {
+    //        name: 'Px',
+    //        type: {
+    //          literal: '*Paxos',
+    //          structs: ['Paxos']
+    //        },
+    //      }],
+    //    }, {
+    //      name: 'Paxos',
+    //      fields: [{
+    //        name: 'me',
+    //        type: {
+    //          literal: 'int',
+    //          structs: ['int'],
+    //        },
+    //      }, {
+    //        name: 'dead',
+    //        type: {
+    //          literal: 'bool',
+    //          structs: ['bool'],
+    //        },
+    //      }, {
+    //        name: 'unreliable',
+    //        type: {
+    //          literal: 'bool',
+    //          structs: ['bool'],
+    //        },
+    //      }, {
+    //        name: 'rpcCount',
+    //        type: {
+    //          literal: 'int',
+    //          structs: ['int']
+    //        },
+    //      }, {
+    //        name: 'peers',
+    //        type: {
+    //          literal: '[]string',
+    //          structs: ['string']
+    //        },
+    //      }],
+    //    }],
+    //  }],
+    //}],
+    //edges: [{
+    //  from: {
+    //    fieldTypeName: "Px",
+    //    fileName: "mainfile.go",
+    //    packageName: "mainpkg",
+    //    structName: "Something",
+    //  },
+    //  to: {
+    //    fieldTypeName: "",
+    //    fileName: "mainfile.go",
+    //    packageName: "mainpkg",
+    //    structName: "Paxos",
+    //  },
+    //}]
+  {
     packages: [{
-      name: 'mainpkg',
+      name: 'loading...',
       files: [{
-        name: 'mainfile.go',
-        structs: [{
-          // name: 'Op',
-          name: 'Something',
-          fields: [{
-            name: 'OpType',
-            type: {
-              literal: 'string',
-              structs: ['string'],
-            },
-          }, {
-            name: 'ServerId',
-            type: {
-              literal: 'int',
-              structs: ['int'],
-            },
-          }, {
-            name: 'Px',
-            type: {
-              literal: '*Paxos',
-              structs: ['Paxos']
-            },
-          }],
-        }, {
-          name: 'Paxos',
-          fields: [{
-            name: 'me',
-            type: {
-              literal: 'int',
-              structs: ['int'],
-            },
-          }, {
-            name: 'dead',
-            type: {
-              literal: 'bool',
-              structs: ['bool'],
-            },
-          }, {
-            name: 'unreliable',
-            type: {
-              literal: 'bool',
-              structs: ['bool'],
-            },
-          }, {
-            name: 'rpcCount',
-            type: {
-              literal: 'int',
-              structs: ['int']
-            },
-          }, {
-            name: 'peers',
-            type: {
-              literal: '[]string',
-              structs: ['string']
-            },
-          }],
-        }],
+        name: 'loading...',
+        structs: [],
       }],
     }],
-    edges: [{
-      from: {
-        fieldTypeName: "Px",
-        fileName: "mainfile.go",
-        packageName: "mainpkg",
-        structName: "Something",
-      },
-      to: {
-        fieldTypeName: "",
-        fileName: "mainfile.go",
-        packageName: "mainpkg",
-        structName: "Paxos",
-      },
-    }]
+    edges: []
   }
 };
 
