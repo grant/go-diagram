@@ -46,7 +46,7 @@ var (
 	pkgs map[string]*ast.Package
 )
 
-func readFileIfModified(lastMod time.Time) ([]Package, time.Time, error) {
+func readFileIfModified(lastMod time.Time) (*ClientStruct, time.Time, error) {
 	if len(filenames) == 0 {
 		return runParser(lastMod, nil)
 	}
@@ -60,23 +60,22 @@ func readFileIfModified(lastMod time.Time) ([]Package, time.Time, error) {
 	return nil, lastMod, nil
 }
 
-////
-func runParser(lastMod time.Time, err error) ([]Package, time.Time, error) {
+func runParser(lastMod time.Time, err error) (*ClientStruct, time.Time, error) {
 	// TODO handle error
 	fmt.Println("run parser")
-	var clientpkgs []Package
-	clientpkgs, pkgs = GetStructsDirName(dirname)
+    var clientstruct *ClientStruct
+	clientstruct, pkgs = GetStructsDirName(dirname)
 
 	// Set new files to watch
 	// TODO race conditions?
 	filenames = []string{}
-	for _, clientpkg := range clientpkgs {
+	for _, clientpkg := range clientstruct.Packages {
 		for _, clientfile := range clientpkg.Files {
 			filenames = append(filenames, clientfile.Name)
 		}
 	}
 
-	return clientpkgs, lastMod, err
+	return clientstruct, lastMod, err
 }
 
 func reader(ws *websocket.Conn) {
@@ -112,19 +111,19 @@ func writer(ws *websocket.Conn, lastMod time.Time) {
 	for {
 		select {
 		case <-fileTicker.C:
-			var packages []Package
+			var clientstruct *ClientStruct
 			//var p []byte
 			var err error
 
-			packages, lastMod, err = readFileIfModified(lastMod)
+			clientstruct, lastMod, err = readFileIfModified(lastMod)
 
 			if err != nil {
 				// tODO
 			}
-			if packages != nil {
+			if clientstruct != nil {
 				fmt.Println("Pushing file change to client.")
 				ws.SetWriteDeadline(time.Now().Add(writeWait))
-				ws.WriteJSON(ClientStruct{Packages: packages})
+				ws.WriteJSON(clientstruct)
 				//if err := ws.WriteMessage(websocket.TextMessage, p); err != nil {
 				//	return
 				//}

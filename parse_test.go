@@ -1,14 +1,14 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	// "encoding/json"
+	// "fmt"
 	"go/ast"
 	"testing"
 )
 
 func TestWriteClientPackages(t *testing.T) {
-	clientpkgs, pkgmap := GetStructsDirName(".")
+	clientpkgs, pkgmap, _ := GetStructsDirName(".")
 	WriteClientPackages("nono", pkgmap, clientpkgs)
 }
 
@@ -24,11 +24,11 @@ type EdgeCasesStruct struct {
 	B      *ast.Node
 }
 
-func test() {
-	structs := GetStructsFileName("parse.go")
-	structsJson, _ := json.Marshal(structs)
-	fmt.Println(string(structsJson))
-}
+// func test() {
+// 	structs := GetStructsFileName("parse.go")
+// 	structsJson, _ := json.Marshal(structs)
+// 	fmt.Println(string(structsJson))
+// }
 
 type ListNode struct {
 	data int32
