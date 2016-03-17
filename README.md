@@ -6,6 +6,9 @@ A UML diagram editor for Golang projects
 
 [Poster](https://docs.google.com/presentation/d/1xgy8ltVHn0e96vcdWVlRIYVDdQI2QKU-5a366ivnRjo/edit)
 
+## [Video Demo](https://drive.google.com/file/d/0B4riRkl944ZqcnQzR0x1c0QxVDA/view?usp=sharing)
+[![screenshot from 2016-03-17 02 05 31](https://cloud.githubusercontent.com/assets/2159661/13841247/f70780fa-ebe4-11e5-96ba-5667c4af1b12.png)](https://drive.google.com/file/d/0B4riRkl944ZqcnQzR0x1c0QxVDA/view?usp=sharing)
+
 ## Setup
 Make sure your `PATH` includes `:$GOPATH/bin`
 ```
