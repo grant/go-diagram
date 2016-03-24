@@ -13,10 +13,20 @@ A UML diagram editor for Golang projects
 Make sure your `PATH` includes `:$GOPATH/bin`
 ```
 cd app
-npm i
+sudo npm i
 npm run build
 
 cd ..
 go install github.com/grant/go-diagram
 go-diagram <directory name>
 ```
+
+## Tech Stack
+- Golang for the server (uses goparser, gorilla websockets)
+- React + Redux frontend
+  - Webpack
+  - Babel
+  - Stylus
+
+## Other
+I believe Go 1.5+ is required.
