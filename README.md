@@ -1,5 +1,8 @@
 # go-diagram
-A UML diagram editor for Golang projects
+
+A UML diagram editor for Golang projects.
+
+> **Maintainence warning**: This project is not maintained as this was a college project. Pull requests are accepted though.
 
 ## Links
 [Project Proposal (includes response to feedback, reference, and design document)](https://docs.google.com/document/d/1exvOxiBwERKd5P1nZ7hjmhkGchoAhr0tZK_f_3EVy2M/edit)
